@@ -33,6 +33,13 @@ class _ContactPickerDemoState extends State<ContactPickerDemo> {
   bool _isLoading = false;
   PermissionStatus status = PermissionStatus.denied; // Add default value
 
+
+  @override
+  void initState() {
+  _pickContacts();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,14 +55,19 @@ class _ContactPickerDemoState extends State<ContactPickerDemo> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : ListView.builder(
-        itemCount: _contacts.length,
-        itemBuilder: (BuildContext context, int index) {
-          final phone = _contacts[index].phones?.isNotEmpty ?? false
-              ? _contacts[index].phones!.first.value
-              : 'No phone number';
-          return ContactListTile(contact: _contacts[index]);
-        },
-      ),
+              itemCount: _contacts.length,
+              itemBuilder: (BuildContext context, int index) {
+                final phone = _contacts[index].phones?.isNotEmpty ?? false
+                    ? _contacts[index].phones!.first.value
+                    : 'No phone number';
+                return ContactListTile(
+                  contact: _contacts[index],
+                  onClick: () {
+                    print(_contacts[index].toMap());
+                  },
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: _pickContacts,
         tooltip: 'Pick Contacts',
@@ -91,8 +103,8 @@ class _ContactPickerDemoState extends State<ContactPickerDemo> {
               _isLoading = false;
             });
           }
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('No contacts found!')));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('No contacts found!')));
         }
       } catch (e) {
         // Handle errors during contact fetching
@@ -100,6 +112,7 @@ class _ContactPickerDemoState extends State<ContactPickerDemo> {
       }
     } else {
       // Handle permission denial
+      await Permission.contacts.request();
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Permission denied to access contacts!')));
     }
@@ -112,28 +125,24 @@ class _ContactPickerDemoState extends State<ContactPickerDemo> {
 
 class ContactListTile extends StatelessWidget {
   final Contact contact;
+  final Function() onClick;
 
-  const ContactListTile({required this.contact});
+  const ContactListTile({required this.contact, required this.onClick});
 
   @override
   Widget build(BuildContext context) {
     final phoneNumber = contact.phones?.isNotEmpty ?? false
         ? contact.phones!.first.value
         : 'No phone number'; // Use final variable for clarity
-
-    // Convert Uint8List to base64-encoded String
-    String? imageUrl;
-    if (contact.avatar != null && contact.avatar!.isNotEmpty) {
-      final base64Image = base64Encode(contact.avatar!);
-      imageUrl = 'data:image/jpeg;base64,$base64Image';
-    }
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      leading: imageUrl != null
-          ? CircleAvatar(backgroundImage: NetworkImage(imageUrl))
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      leading: contact.avatar != null && contact.avatar!.isNotEmpty
+          ? CircleAvatar(backgroundImage: MemoryImage(contact.avatar!))
           : CircleAvatar(child: Text(contact.initials())),
       title: Text(contact.displayName ?? ''),
       subtitle: Text(phoneNumber ?? ''), // Use the final variable
+      onTap: onClick,
     );
   }
 }

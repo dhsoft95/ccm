@@ -14,6 +14,7 @@ class DashboardScreen extends StatefulWidget {
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
 }
+
 class _DashboardScreenState extends State<DashboardScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _currentIndex = 0;
@@ -46,7 +47,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.bottomLeft,
                   end: Alignment.bottomRight,
-                  colors: [const Color(0xfffcea97), const Color(0xff1d2f36).withOpacity(0.4)],
+                  colors: [
+                    const Color(0xfffcea97),
+                    const Color(0xff1d2f36).withOpacity(0.4)
+                  ],
                 ),
                 borderRadius: const BorderRadius.only(
                   bottomRight: Radius.circular(30.0),
@@ -189,7 +193,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           child: CircleAvatar(
                             radius: MediaQuery.of(context).size.width *
                                 0.096, // 9.6% of the screen width
-                            backgroundImage: const AssetImage('assets/dhsoft.jpg'),
+                            backgroundImage:
+                                const AssetImage('assets/dhsoft.jpg'),
                           ),
                         ),
                       ],
@@ -223,7 +228,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ],
                 ),
                 height: 110,
-                child:  Padding(
+                child: Padding(
                   padding: EdgeInsets.all(10.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -252,8 +257,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (context) =>  ContactPickerDemo()));
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ContactPickerDemo()));
                         },
                         child: CustomCardTwo(
                           colors: [Color(0xff0f674f), Color(0xff0f674f)],
@@ -264,13 +269,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ],
                   ),
                 ),
-
               ),
             ),
-             const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 19.0),
-              child:  Container(
+              child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
                   gradient: const LinearGradient(
@@ -290,7 +296,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: const Padding(
                   padding: EdgeInsets.all(10.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         CustomCard(
                             title: 'Success',
@@ -307,13 +313,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             colors: [Color(0xff0f674f), Color(0xff0f674f)],
                             icon: Icons.error_outline,
                             badgeCount: 2),
-                      ]
-                  ),
+                      ]),
                 ),
-
               ),
             ),
-          const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16.0),
@@ -333,9 +339,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   // Handle the tap action for this item
                 },
               ),
-
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16.0),
@@ -384,9 +391,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       floatingActionButton: Builder(
         builder: (context) => FloatingActionButton(
+          shape: const CircleBorder(),
           onPressed: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => const Messages()));
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const Messages()));
           },
           backgroundColor: const Color(0xff0f674f),
           child: const Icon(Icons.message_outlined, color: Color(0xfffcea97)),
@@ -408,8 +416,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
           // Handle navigation based on the index
           if (index == 1) {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => const ProfileScreen()));
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const ProfileScreen()));
           }
         },
       ),
@@ -422,7 +430,8 @@ class DashboardCard extends StatelessWidget {
   final IconData icon;
   final List<Color> gradientColors;
 
-  const DashboardCard({super.key, 
+  const DashboardCard({
+    super.key,
     required this.title,
     required this.icon,
     required this.gradientColors,
@@ -482,7 +491,8 @@ class CustomCard extends StatelessWidget {
   final int badgeCount;
 
   const CustomCard(
-      {super.key, required this.title,
+      {super.key,
+      required this.title,
       required this.colors,
       required this.icon,
       required this.badgeCount});
@@ -504,7 +514,7 @@ class CustomCard extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color:const Color(0xfffcea97),
+            color: const Color(0xfffcea97),
             size: 30,
           ),
           const SizedBox(height: 8),
@@ -542,7 +552,11 @@ class CustomCardTwo extends StatelessWidget {
   final IconData icon;
   final String title;
 
-  const CustomCardTwo({super.key, required this.colors, required this.icon, required this.title});
+  const CustomCardTwo(
+      {super.key,
+      required this.colors,
+      required this.icon,
+      required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -579,7 +593,6 @@ class CustomCardTwo extends StatelessWidget {
   }
 }
 
-
 class RecentItemList extends StatelessWidget {
   final List<Map<String, dynamic>> recentItems;
 
@@ -609,7 +622,8 @@ class RecentItemTile extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;
 
-  const RecentItemTile({super.key, 
+  const RecentItemTile({
+    super.key,
     required this.title,
     required this.subtitle,
     required this.icon,
@@ -638,10 +652,11 @@ class RecentItemTile extends StatelessWidget {
           fontSize: 16,
         ),
       ),
-      subtitle: Text(subtitle),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(color: Colors.white.withOpacity(0.7)),
+      ),
       onTap: onPressed,
     );
   }
 }
-
-

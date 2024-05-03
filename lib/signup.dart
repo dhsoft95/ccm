@@ -7,6 +7,7 @@ class RegistrationScreen extends StatefulWidget {
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
+
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -24,11 +25,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     'Kilimanjaro',
   ];
   List<String> dropdownItemsDis = [
-    'Ilala Municipal Council',
-    'Kinondoni Municipal Council',
-    'Temeke Municipal Council',
-    'Kigamboni Municipal Council ',
-    'Ubungo Municipal Council',
   ];
   List<String> dropdownItemskata = [
     'Magomen',
@@ -41,12 +37,37 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     'Mtendaji kata',
     'Mwenyekiti',
   ];
-  String selectedDist = 'Ubungo Municipal Council';
-  String selectedKata = 'Magomen';
-  String selectedCountry = 'Dar es Salaam';
-  String selectedPosition = 'Mbunge';
+  String? selectedDist;
+  String? selectedKata;
+  String? selectedCountry;
+  String? selectedPosition;
   @override
   Widget build(BuildContext context) {
+    if (selectedCountry.toString() == 'Dar es Salaam') {
+      dropdownItemsDis = [
+        'Ilala Municipal Council',
+        'Kinondoni Municipal Council',
+        'Temeke Municipal Council',
+        'Kigamboni Municipal Council ',
+        'Ubungo Municipal Council',
+      ];
+      setState(() {
+
+      });
+    } else if (selectedCountry.toString() == 'Arusha') {
+      dropdownItemsDis = ['Monduli', 'Arumeru', 'Usa river'];
+      setState(() {
+
+      });
+    }else{
+      dropdownItemsDis = [
+        'District 1',
+        'District 2',
+        'District 3',
+        'District 4',
+      ];
+    }
+
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(
@@ -130,7 +151,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               selectedPosition = newValue!;
                             });
                           },
-                          items: dropdownItemPosition.map<DropdownMenuItem<String>>((String value) {
+                          items: dropdownItemPosition
+                              .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
                               child: Text(
@@ -241,9 +263,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedCountry = newValue!;
+                              selectedDist=null;
                             });
                           },
-                          items: dropdownItems.map<DropdownMenuItem<String>>((String value) {
+                          items: dropdownItems
+                              .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
                               child: Text(
@@ -254,45 +278,46 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           }).toList(),
                         ),
                         const SizedBox(height: 20),
-                        DropdownButtonFormField(
-                          decoration: InputDecoration(
-                            labelText: 'District',
-                            labelStyle: const TextStyle(color: Colors.white),
-                            prefixIcon: const Icon(
-                              Icons.account_box_rounded,
-                              color: Colors.white,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          style: const TextStyle(color: Colors.white),
-                          value: selectedDist,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedDist = newValue!;
-                            });
-                          },
-                          items: dropdownItemsDis.map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(
-                                value,
-                                style: const TextStyle(color: Colors.green),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                        const SizedBox(height: 20),
+                       if(selectedCountry!=null && selectedCountry!.isNotEmpty)...[DropdownButtonFormField(
+                         decoration: InputDecoration(
+                           labelText: 'District',
+                           labelStyle: const TextStyle(color: Colors.white),
+                           prefixIcon: const Icon(
+                             Icons.account_box_rounded,
+                             color: Colors.white,
+                           ),
+                           enabledBorder: OutlineInputBorder(
+                             borderRadius: BorderRadius.circular(10),
+                             borderSide: const BorderSide(
+                               color: Colors.white,
+                             ),
+                           ),
+                           focusedBorder: OutlineInputBorder(
+                             borderRadius: BorderRadius.circular(10),
+                             borderSide: const BorderSide(
+                               color: Colors.white,
+                             ),
+                           ),
+                         ),
+                         style: const TextStyle(color: Colors.white),
+                         value: selectedDist,
+                         onChanged: (String? newValue) {
+                           setState(() {
+                             selectedDist = newValue!;
+                           });
+                         },
+                         items: dropdownItemsDis
+                             .map<DropdownMenuItem<String>>((String value) {
+                           return DropdownMenuItem<String>(
+                             value: value,
+                             child: Text(
+                               value,
+                               style: const TextStyle(color: Colors.green),
+                             ),
+                           );
+                         }).toList(),
+                       ),
+                         const SizedBox(height: 20),] ,
                         DropdownButtonFormField(
                           decoration: InputDecoration(
                             labelText: 'State',
@@ -321,7 +346,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               selectedKata = newValue!;
                             });
                           },
-                          items: dropdownItemskata.map<DropdownMenuItem<String>>((String value) {
+                          items: dropdownItemskata
+                              .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
                               child: Text(
@@ -334,7 +360,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         const SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const OTPConfirmationScreen()));
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    const OTPConfirmationScreen()));
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xff009b65),
