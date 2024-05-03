@@ -1,0 +1,15 @@
+flutter_native_splash:
+  color: "#FFFFFF"
+  color_dark: "#272727"
+  image: assets/ccm_logo.png
+  image_dark: assets/ccm_logo.png
+  ios: true
+  android: true
+
+
+
+android_12:
+  color: "#FFFFFF"
+  color_dark: "#272727"
+  image: assets/ccm_logo.png
+  image_dark: assets/ccm_logo.png
