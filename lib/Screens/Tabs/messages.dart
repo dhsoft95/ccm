@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 class Messages extends StatefulWidget {
   const Messages({super.key});
 
   @override
   _LoginPageState createState() => _LoginPageState();
 }
+
 class _LoginPageState extends State<Messages> {
   final TextEditingController fromController = TextEditingController();
   final TextEditingController toController = TextEditingController();
   final TextEditingController textMessagesController = TextEditingController();
+  List<String> sendTypeItems = ['Individual SMS', 'Group SMS'];
+
+  String? sendType;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff009b65),
-        title:  Text(
+        title: Text(
           'Bunge App',
           style: GoogleFonts.roboto(
             fontSize: 24,
@@ -38,9 +43,7 @@ class _LoginPageState extends State<Messages> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
-                  decoration: const BoxDecoration(
-
-                  ),
+                  decoration: const BoxDecoration(),
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Image.asset(
@@ -89,6 +92,46 @@ class _LoginPageState extends State<Messages> {
                         ),
                       ),
                       const SizedBox(height: 20),
+                      DropdownButtonFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Send To',
+                          labelStyle: const TextStyle(color: Colors.white),
+                          prefixIcon: const Icon(
+                            Icons.add_chart_sharp,
+                            color: Colors.white,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                              color: Colors.white,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        style: const TextStyle(color: Colors.white),
+                        value: sendType,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            sendType = newValue!;
+                          });
+                        },
+                        items: sendTypeItems
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(
+                              value,
+                              style: const TextStyle(color: Colors.green),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: 20),
                       TextField(
                         controller: toController,
                         style: const TextStyle(color: Colors.white),
@@ -117,7 +160,8 @@ class _LoginPageState extends State<Messages> {
                       TextFormField(
                         controller: textMessagesController,
                         maxLines: null, // Set to null to allow multiple lines
-                        style: const TextStyle(color: Colors.white), // Set text color to white
+                        style: const TextStyle(
+                            color: Colors.white), // Set text color to white
                         decoration: InputDecoration(
                           labelText: 'Text Messages',
                           labelStyle: const TextStyle(color: Colors.white),
@@ -152,7 +196,8 @@ class _LoginPageState extends State<Messages> {
                           // Perform actions with the form data...
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xff009b65), // Background color
+                          backgroundColor:
+                              const Color(0xff009b65), // Background color
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'login.dart'; // Import your login screen
+import 'Screens/Auth/login.dart'; // Import your login screen
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();

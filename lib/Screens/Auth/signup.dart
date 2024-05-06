@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:iconly/iconly.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'login.dart';
 import 'otp.dart';
 
@@ -33,9 +35,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     'Kimara',
   ];
   List<String> dropdownItemPosition = [
+    'M/Kiti wa Mtaa/Kijiji ',
+    'Diwani',
     'Mbunge',
-    'Mtendaji kata',
-    'Mwenyekiti',
   ];
   String? selectedDist;
   String? selectedKata;
@@ -283,7 +285,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                            labelText: 'District',
                            labelStyle: const TextStyle(color: Colors.white),
                            prefixIcon: const Icon(
-                             Icons.account_box_rounded,
+                             IconlyLight.location,
                              color: Colors.white,
                            ),
                            enabledBorder: OutlineInputBorder(
@@ -356,6 +358,30 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               ),
                             );
                           }).toList(),
+                        ),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          controller: phoneNumberController,
+                          decoration: InputDecoration(
+                            labelText: 'Street',
+                            labelStyle: const TextStyle(color: Colors.white),
+                            prefixIcon: const Icon(
+                              Symbols.streetview_rounded,
+                              color: Colors.white,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: Colors.white,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 20),
                         ElevatedButton(

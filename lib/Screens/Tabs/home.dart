@@ -1,11 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:ccm/proEdit.dart';
+import 'package:ccm/Screens/Tabs/proEdit.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:iconly/iconly.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import 'contacts.dart';
+import '../Pages/contacts.dart';
 import 'messages.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -251,8 +252,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         },
                         child: CustomCardTwo(
                           colors: [Color(0xff0f674f), Color(0xff0f674f)],
-                          icon: Ionicons.accessibility,
-                          title: 'Total Response',
+                          icon: Symbols.sms_sharp,
+                          title: 'Topup SMS',
                         ),
                       ),
                       GestureDetector(
@@ -397,7 +398,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 MaterialPageRoute(builder: (context) => const Messages()));
           },
           backgroundColor: const Color(0xff0f674f),
-          child: const Icon(Icons.message_outlined, color: Color(0xfffcea97)),
+          child:
+              const Icon(IconlyBold.send, size: 28, color: Color(0xfffcea97)),
         ),
       ),
       floatingActionButtonLocation:
