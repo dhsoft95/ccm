@@ -1,10 +1,14 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:ccm/Providers/authProvider.dart';
 import 'package:ccm/Screens/Tabs/proEdit.dart';
+import 'package:ccm/Services/formats.dart';
+import 'package:ccm/Services/greetings.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:iconly/iconly.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:provider/provider.dart';
 
 import '../Pages/contacts.dart';
 import 'messages.dart';
@@ -18,12 +22,20 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late AuthProvider authProvider;
   int _currentIndex = 0;
   final List<String> images = [
     'assets/samia.jpg',
     'assets/samia.jpg',
     'assets/CCM-4-1536x1046-1.jpg',
   ];
+
+
+  @override
+  void didChangeDependencies() {
+    authProvider = Provider.of<AuthProvider>(context);
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +124,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Welcome,',
+                              '${getGreeting()},',
                               style: TextStyle(
                                 fontSize:
                                     MediaQuery.of(context).size.width * 0.056,
@@ -122,7 +134,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               ),
                             ),
                             Text(
-                              'David John!,',
+                              authProvider.currentUser!.full_name.toString(),
                               style: TextStyle(
                                 fontSize:
                                     MediaQuery.of(context).size.width * 0.056,
@@ -135,7 +147,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 height: MediaQuery.of(context).size.height *
                                     0.008), // 0.8% of the screen height
                             Text(
-                              'Aug 29, 2023',
+                              ValueFormats.stingDateFormat(inputDate: DateTime.now().toLocal().toString()),
                               style: TextStyle(
                                 fontSize:
                                     MediaQuery.of(context).size.width * 0.032,

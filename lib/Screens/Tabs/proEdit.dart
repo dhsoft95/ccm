@@ -1,13 +1,26 @@
+import 'package:ccm/Providers/authProvider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User Profile'),
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(CupertinoIcons.chevron_back,color: Colors.white,),
+              onPressed: () { Navigator.pop(context); },
+              tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            );
+          },
+        ),
+        title: const Text('User Profile',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 24),),
         centerTitle: true,
         backgroundColor: const Color(0xff009b65),
         elevation: 0, // Remove app bar shadow
@@ -30,8 +43,8 @@ class ProfileScreen extends StatelessWidget {
                 backgroundImage: AssetImage('assets/dhsoft.jpg'),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'John Doe',
+               Text(
+                authProvider.currentUser!.full_name.toString(),
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -52,14 +65,14 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: 16),
               const Divider(color: Colors.white),
               const SizedBox(height: 16),
-              const ListTile(
+               ListTile(
                 leading: Icon(
                   Icons.email,
                   color: Colors.white,
                   size: 24,
                 ),
                 title: Text(
-                  'john.doe@example.com',
+                  authProvider.currentUser!.email.toString(),
                   style: TextStyle(color: Colors.white),
                 ),
               ),

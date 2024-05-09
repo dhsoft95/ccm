@@ -12,6 +12,7 @@ class LoginScreen extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
+
 class _LoginPageState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -35,14 +36,11 @@ class _LoginPageState extends State<LoginScreen> {
     }
   ''';
 
-
-
   @override
   void didChangeDependencies() {
-   authProvider = Provider.of<AuthProvider>(context);
+    authProvider = Provider.of<AuthProvider>(context);
     super.didChangeDependencies();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -96,9 +94,11 @@ class _LoginPageState extends State<LoginScreen> {
                   child: Column(
                     children: <Widget>[
                       TextField(
+                        cursorColor: Colors.white,
                         controller: emailController,
+                        style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(
-                          labelText: 'Username',
+                          labelText: 'Email',
                           labelStyle: const TextStyle(color: Colors.white),
                           prefixIcon: const Icon(
                             Icons.person,
@@ -120,7 +120,9 @@ class _LoginPageState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 20),
                       TextField(
+                        cursorColor: Colors.white,
                         controller: passwordController,
+                        style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           labelText: 'Password',
                           labelStyle: const TextStyle(color: Colors.white),
@@ -166,7 +168,8 @@ class _LoginPageState extends State<LoginScreen> {
                           // Navigator.of(context).push(MaterialPageRoute(builder: (context) => const DashboardScreen()));
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xff009b65), // Background color
+                          backgroundColor:
+                              const Color(0xff009b65), // Background color
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -196,7 +199,9 @@ class _LoginPageState extends State<LoginScreen> {
                       InkWell(
                         onTap: () {
                           // Handle registration button logic here
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => const RegistrationScreen()));
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  const RegistrationScreen()));
                         },
                         child: const Text(
                           'Register',
@@ -217,15 +222,33 @@ class _LoginPageState extends State<LoginScreen> {
     );
   }
 
-
-
-  login() async{
-    if(emailController.text.isNotEmpty&&passwordController.text.isNotEmpty){
-      await authProvider.login(user: User(email: emailController.text,
-      password: passwordController.text));
+  login() async {
+    if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              child: Container(
+                height: 100,
+                width: 100,
+                alignment: Alignment.center,
+                child: CircularProgressIndicator.adaptive(backgroundColor: Colors.white,
+                ),
+              ),
+            );
+          });
+      await authProvider.login(
+          user: User(
+              email: emailController.text, password: passwordController.text));
+      if (authProvider.currentUser != null) {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => DashboardScreen()),
+            (route) => false);
+      }
     }
   }
-
-
-
 }

@@ -11,6 +11,8 @@ class AuthProvider extends ChangeNotifier {
   final _baseUrl = dotenv.env['API_URL'];
 
 
+
+
    User? _currentUser;
 
   User? get currentUser => _currentUser;
