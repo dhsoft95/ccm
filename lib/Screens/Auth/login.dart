@@ -1,6 +1,9 @@
+import 'package:ccm/Models/User.dart';
+import 'package:ccm/Providers/authProvider.dart';
 import 'package:ccm/Screens/Auth/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../Tabs/home.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -10,10 +13,12 @@ class LoginScreen extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 class _LoginPageState extends State<LoginScreen> {
-  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   // Add this line to declare _isLoading
   final bool _isLoading = false;
+
+  late AuthProvider authProvider;
 
   final String loginMutation = r'''
     mutation Login($username: String!, $password: String!) {
@@ -29,6 +34,15 @@ class _LoginPageState extends State<LoginScreen> {
       }
     }
   ''';
+
+
+
+  @override
+  void didChangeDependencies() {
+   authProvider = Provider.of<AuthProvider>(context);
+    super.didChangeDependencies();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +96,7 @@ class _LoginPageState extends State<LoginScreen> {
                   child: Column(
                     children: <Widget>[
                       TextField(
-                        controller: usernameController,
+                        controller: emailController,
                         decoration: InputDecoration(
                           labelText: 'Username',
                           labelStyle: const TextStyle(color: Colors.white),
@@ -148,9 +162,8 @@ class _LoginPageState extends State<LoginScreen> {
                       const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () {
-                          // Handle login logic here
-                          // _performLogin(context);
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => const DashboardScreen()));
+                          login();
+                          // Navigator.of(context).push(MaterialPageRoute(builder: (context) => const DashboardScreen()));
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xff009b65), // Background color
@@ -202,6 +215,15 @@ class _LoginPageState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+
+
+  login() async{
+    if(emailController.text.isNotEmpty&&passwordController.text.isNotEmpty){
+      await authProvider.login(user: User(email: emailController.text,
+      password: passwordController.text));
+    }
   }
 
 
