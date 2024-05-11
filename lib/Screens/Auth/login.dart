@@ -243,6 +243,7 @@ class _LoginPageState extends State<LoginScreen> {
       await authProvider.login(
           user: User(
               email: emailController.text, password: passwordController.text));
+      Navigator.pop(context);
       if (authProvider.currentUser != null) {
         Navigator.pushAndRemoveUntil(
             context,
