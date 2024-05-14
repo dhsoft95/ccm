@@ -1,15 +1,21 @@
 import 'package:ccm/Providers/authProvider.dart';
+import 'package:ccm/Providers/dataProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'Screens/Auth/login.dart'; // Import your login screen
 
+final dataProvider = DataProvider();
+
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+  await dataProvider.getDropdownData();
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (_)=>AuthProvider())
+      ChangeNotifierProvider(create: (_)=>AuthProvider()),
+      ChangeNotifierProvider.value(value: dataProvider)
     ],
       child: const MyApp()));
 }

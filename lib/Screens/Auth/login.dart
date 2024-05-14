@@ -235,7 +235,8 @@ class _LoginPageState extends State<LoginScreen> {
                 height: 100,
                 width: 100,
                 alignment: Alignment.center,
-                child: CircularProgressIndicator.adaptive(backgroundColor: Colors.white,
+                child: CircularProgressIndicator.adaptive(
+                  backgroundColor: Colors.white,
                 ),
               ),
             );

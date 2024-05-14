@@ -10,20 +10,30 @@ import '../Models/User.dart';
 class AuthProvider extends ChangeNotifier {
   final _baseUrl = dotenv.env['API_URL'];
 
-
-
-
-   User? _currentUser;
+  User? _currentUser;
 
   User? get currentUser => _currentUser;
 
   Future login({required User user}) async {
     try {
-      http.Response response = await http.post(Uri.parse("$_baseUrl/login"),
-          body: user.toLogin());
+      http.Response response =
+          await http.post(Uri.parse("$_baseUrl/login"), body: user.toLogin());
 
       if (response.statusCode == 200) {
+        var output = jsonDecode(response.body);
 
+        _currentUser = User.fromLoginJson(output['data']);
+        log(_currentUser!.toJson().toString());
+      }
+    } catch (e) {}
+  }
+
+  Future register({required User user}) async {
+    try {
+      http.Response response = await http.post(Uri.parse("$_baseUrl/register"),
+          body: user.toRegistration());
+
+      if (response.statusCode == 200) {
         var output = jsonDecode(response.body);
 
         _currentUser = User.fromLoginJson(output['data']);

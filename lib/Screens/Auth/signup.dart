@@ -1,6 +1,10 @@
+import 'package:ccm/Providers/authProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:provider/provider.dart';
+import '../../Models/User.dart';
+import '../Tabs/home.dart';
 import 'login.dart';
 import 'otp.dart';
 
@@ -11,6 +15,8 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+  late AuthProvider authProvider;
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController fullNameController = TextEditingController();
@@ -26,8 +32,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     'Kigoma',
     'Kilimanjaro',
   ];
-  List<String> dropdownItemsDis = [
-  ];
+  List<String> dropdownItemsDis = [];
   List<String> dropdownItemskata = [
     'Magomen',
     'Buza',
@@ -43,6 +48,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String? selectedKata;
   String? selectedCountry;
   String? selectedPosition;
+
+  @override
+  void didChangeDependencies() {
+    authProvider = Provider.of<AuthProvider>(context);
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (selectedCountry.toString() == 'Dar es Salaam') {
@@ -53,15 +65,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         'Kigamboni Municipal Council ',
         'Ubungo Municipal Council',
       ];
-      setState(() {
-
-      });
+      setState(() {});
     } else if (selectedCountry.toString() == 'Arusha') {
       dropdownItemsDis = ['Monduli', 'Arumeru', 'Usa river'];
-      setState(() {
-
-      });
-    }else{
+      setState(() {});
+    } else {
       dropdownItemsDis = [
         'District 1',
         'District 2',
@@ -265,7 +273,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedCountry = newValue!;
-                              selectedDist=null;
+                              selectedDist = null;
                             });
                           },
                           items: dropdownItems
@@ -280,46 +288,49 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           }).toList(),
                         ),
                         const SizedBox(height: 20),
-                       if(selectedCountry!=null && selectedCountry!.isNotEmpty)...[DropdownButtonFormField(
-                         decoration: InputDecoration(
-                           labelText: 'District',
-                           labelStyle: const TextStyle(color: Colors.white),
-                           prefixIcon: const Icon(
-                             IconlyLight.location,
-                             color: Colors.white,
-                           ),
-                           enabledBorder: OutlineInputBorder(
-                             borderRadius: BorderRadius.circular(10),
-                             borderSide: const BorderSide(
-                               color: Colors.white,
-                             ),
-                           ),
-                           focusedBorder: OutlineInputBorder(
-                             borderRadius: BorderRadius.circular(10),
-                             borderSide: const BorderSide(
-                               color: Colors.white,
-                             ),
-                           ),
-                         ),
-                         style: const TextStyle(color: Colors.white),
-                         value: selectedDist,
-                         onChanged: (String? newValue) {
-                           setState(() {
-                             selectedDist = newValue!;
-                           });
-                         },
-                         items: dropdownItemsDis
-                             .map<DropdownMenuItem<String>>((String value) {
-                           return DropdownMenuItem<String>(
-                             value: value,
-                             child: Text(
-                               value,
-                               style: const TextStyle(color: Colors.green),
-                             ),
-                           );
-                         }).toList(),
-                       ),
-                         const SizedBox(height: 20),] ,
+                        if (selectedCountry != null &&
+                            selectedCountry!.isNotEmpty) ...[
+                          DropdownButtonFormField(
+                            decoration: InputDecoration(
+                              labelText: 'District',
+                              labelStyle: const TextStyle(color: Colors.white),
+                              prefixIcon: const Icon(
+                                IconlyLight.location,
+                                color: Colors.white,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            style: const TextStyle(color: Colors.white),
+                            value: selectedDist,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedDist = newValue!;
+                              });
+                            },
+                            items: dropdownItemsDis
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  style: const TextStyle(color: Colors.green),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
                         DropdownButtonFormField(
                           decoration: InputDecoration(
                             labelText: 'State',
@@ -431,5 +442,44 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
       ),
     );
+  }
+
+  register() async {
+    if (emailController.text.isNotEmpty &&
+        passwordController.text.isNotEmpty &&
+        fullNameController.text.isNotEmpty &&
+        phoneNumberController.text.isNotEmpty) {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              child: Container(
+                height: 100,
+                width: 100,
+                alignment: Alignment.center,
+                child: CircularProgressIndicator.adaptive(
+                  backgroundColor: Colors.white,
+                ),
+              ),
+            );
+          });
+      await authProvider.register(
+          user: User(
+        full_name: fullNameController.text,
+        phone: phoneNumberController.text,
+        email: emailController.text,
+        password: passwordController.text,
+      ));
+      Navigator.pop(context);
+      if (authProvider.currentUser != null) {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => OTPConfirmationScreen()),
+            (route) => false);
+      }
+    }
   }
 }
