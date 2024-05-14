@@ -23,8 +23,9 @@ class DataProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         var output = jsonDecode(response.body);
         List temp = output['regions'];
-        log(temp.toString());
+
         _regions = temp.map((region) => Region.fromJson(region)).toList();
+        log(temp.toString());
         notifyListeners();
       }
     } catch (e) {
