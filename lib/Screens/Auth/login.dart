@@ -21,20 +21,20 @@ class _LoginPageState extends State<LoginScreen> {
 
   late AuthProvider authProvider;
 
-  final String loginMutation = r'''
-    mutation Login($username: String!, $password: String!) {
-      login(input: {
-        username: $username,
-        password: $password
-      }) {
-        access_token
-        user {
-          email
-          name
-        }
-      }
-    }
-  ''';
+  // final String loginMutation = r'''
+  //   mutation Login($username: String!, $password: String!) {
+  //     login(input: {
+  //       username: $username,
+  //       password: $password
+  //     }) {
+  //       access_token
+  //       user {
+  //         email
+  //         name
+  //       }
+  //     }
+  //   }
+  // ''';
 
   @override
   void didChangeDependencies() {
