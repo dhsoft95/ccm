@@ -8,7 +8,7 @@ class Supporter {
   String? ward_id;
   String? district_id;
   String? phone_number;
-  String? promised;
+  int? promised;
   String? other_supporter_details;
 
   Supporter(
@@ -26,17 +26,16 @@ class Supporter {
 
   Map toJson() {
     return {
-      "first_name": "<string>",
-      "last_name": "<string>",
-      "dob": "<string>",
-      "gender": "<string>",
-      "region_id": "<integer>",
-      "village_id": "<integer>",
-      "ward_id": "<integer>",
-      "district_id": "<integer>",
-      "phone_number": "<string>",
-      "promised": "<boolean>",
-      "other_supporter_details": "<string>"
+      "first_name": first_name,
+      "last_name": last_name,
+      "gender": gender,
+      "region_id":region_id,
+      "village_id": village_id,
+      "ward_id": ward_id,
+      "district_id": district_id,
+      "phone_number": phone_number,
+      "promised":promised.toString(),
+      "other_supporter_details":other_supporter_details
     };
   }
 
@@ -51,7 +50,7 @@ class Supporter {
       ward_id: json['ward_id'],
       district_id: json['district_id'],
       phone_number: json['phone_number'],
-      promised: json['promised'],
+      promised: int.parse(json['promised'].toString()),
       other_supporter_details: json['other_supporter_details'],
     );
   }

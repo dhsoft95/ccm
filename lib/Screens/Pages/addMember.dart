@@ -1,96 +1,52 @@
-import 'package:ccm/Models/positions.dart';
-import 'package:ccm/Providers/authProvider.dart';
-import 'package:ccm/Providers/dataProvider.dart';
+import 'package:ccm/Models/supporter.dart';
+import 'package:ccm/Providers/supporterProvider.dart';
+import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:iconly/iconly.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
-import '../../Models/User.dart';
-import '../../Models/locations.dart';
-import '../Tabs/home.dart';
-import 'login.dart';
-import 'otp.dart';
 
-class RegistrationScreen extends StatefulWidget {
-  const RegistrationScreen({Key? key}) : super(key: key);
+import '../../Models/locations.dart';
+import '../../Providers/dataProvider.dart';
+import 'contacts.dart';
+
+class AddSupporter extends StatefulWidget {
+  const AddSupporter({super.key});
+
   @override
-  _RegistrationScreenState createState() => _RegistrationScreenState();
+  State<AddSupporter> createState() => _AddSupporterState();
 }
 
-class _RegistrationScreenState extends State<RegistrationScreen> {
-  late AuthProvider authProvider;
+class _AddSupporterState extends State<AddSupporter> {
+  late SupporterProvider supporterProvider;
   late DataProvider dataProvider;
   List<Region> _regions = [];
-  List<Positions> _positions = [];
 
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController detailsController = TextEditingController();
-  List<String> dropdownItems = [
-    'Arusha',
-    'Dar es Salaam',
-    'Dodoma',
-    'Geita',
-    'Iringa',
-    'Kagera',
-    'Katavi',
-    'Kigoma',
-    'Kilimanjaro',
-  ];
-  List<String> dropdownItemsDis = [];
-  List<String> dropdownItemskata = [
-    'Magomen',
-    'Buza',
-    'Mtambani',
-    'Kimara',
-  ];
-  List<String> dropdownItemPosition = [
-    'M/Kiti wa Mtaa/Kijiji ',
-    'Diwani',
-    'Mbunge',
-  ];
+
   District? selectedDistrict;
   Village? selectedVillage;
   Region? selectedRegion;
   Ward? selectedWard;
-  Positions? selectedPosition;
+  String _selectedGender = "";
+  String promised = "";
 
   @override
   void didChangeDependencies() {
-    authProvider = Provider.of<AuthProvider>(context);
+    supporterProvider = Provider.of<SupporterProvider>(context);
     dataProvider = Provider.of<DataProvider>(context);
     _regions = dataProvider.regions;
-    _positions = dataProvider.positions;
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (selectedRegion.toString() == 'Dar es Salaam') {
-      dropdownItemsDis = [
-        'Ilala Municipal Council',
-        'Kinondoni Municipal Council',
-        'Temeke Municipal Council',
-        'Kigamboni Municipal Council ',
-        'Ubungo Municipal Council',
-      ];
-      setState(() {});
-    } else if (selectedRegion.toString() == 'Arusha') {
-      dropdownItemsDis = ['Monduli', 'Arumeru', 'Usa river'];
-      setState(() {});
-    } else {
-      dropdownItemsDis = [
-        'District 1',
-        'District 2',
-        'District 3',
-        'District 4',
-      ];
-    }
-
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(
@@ -142,7 +98,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     // ),
                     const SizedBox(height: 10),
                     const Text(
-                      'Registration',
+                      'Add Member',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -162,105 +118,176 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     child: Column(
                       children: <Widget>[
                         const SizedBox(height: 20),
-                        DropdownButtonFormField(
-                          style: const TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            labelText: 'Position',
-                            hintText: 'Select Position',
-                            labelStyle: const TextStyle(color: Colors.white),
-                            hintStyle: const TextStyle(color: Colors.white),
-                            prefixIcon: const Icon(
-                              Icons.account_box_rounded,
-                              color: Colors.white,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: TextFormField(
+                                  controller: firstNameController,
+                                  style: const TextStyle(color: Colors.white),
+                                  cursorColor: Colors.white,
+                                  decoration: InputDecoration(
+                                    labelText: 'First Name',
+                                    labelStyle:
+                                        const TextStyle(color: Colors.white),
+                                    prefixIcon: const Icon(
+                                      Icons.person,
+                                      color: Colors.white,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: TextFormField(
+                                  controller: lastNameController,
+                                  style: const TextStyle(color: Colors.white),
+                                  cursorColor: Colors.white,
+                                  decoration: InputDecoration(
+                                    labelText: 'Last Name',
+                                    labelStyle:
+                                        const TextStyle(color: Colors.white),
+                                    prefixIcon: const Icon(
+                                      Icons.person,
+                                      color: Colors.white,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                          value: selectedPosition,
-                          onChanged: (newValue) {
-                            setState(() {
-                              selectedPosition = newValue!;
-                            });
-                          },
-                          items: _positions
-                              .map<DropdownMenuItem>((value) {
-                            return DropdownMenuItem(
-                              value: value,
-                              child: Text(
-                                value.name.toString(),
-                                style: const TextStyle(color: Colors.green),
-                              ),
-                            );
-                          }).toList(),
+                          ],
                         ),
                         const SizedBox(height: 20),
-                        TextFormField(
-                          controller: fullNameController,
-                          style:  const TextStyle(color: Colors.white),
-                          cursorColor: Colors.white,
-                          decoration: InputDecoration(
-                            labelText: 'Full Name',
-                            labelStyle: const TextStyle(color: Colors.white),
-                            prefixIcon: const Icon(
-                              Icons.person,
-                              color: Colors.white,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Gender",
+                              style: TextStyle(color: Colors.white),
                             ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
-                              ),
+                            Row(
+                              children: [
+                                Row(
+                                  children: [
+                                    Radio<String>(
+                                      value: 'Male',
+                                      groupValue: _selectedGender,
+                                      onChanged: (value) => setState(
+                                          () => _selectedGender = value!),
+                                      activeColor: Colors.white,
+                                    ),
+                                    Text(
+                                      'Male',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Radio<String>(
+                                      value: 'Female',
+                                      groupValue: _selectedGender,
+                                      onChanged: (value) => setState(
+                                          () => _selectedGender = value!),
+                                      activeColor: Colors.white,
+                                    ),
+                                    Text(
+                                      'Female',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
+                          ],
                         ),
-                        const SizedBox(height: 20),
-                        TextFormField(
-                          controller: emailController,
-                          style:  const TextStyle(color: Colors.white),
-                          cursorColor: Colors.white,
-                          decoration: InputDecoration(
-                            labelText: 'Email',
-                            hintText: "Enter email",
-                            labelStyle: const TextStyle(color: Colors.white),
-                            hintStyle:  TextStyle(color: Colors.white.withOpacity(0.7)),
-                            prefixIcon: const Icon(
-                              Icons.person,
-                              color: Colors.white,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Promised",
+                              style: TextStyle(color: Colors.white),
                             ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
-                              ),
+                            Row(
+                              children: [
+                                Row(
+                                  children: [
+                                    Radio<String>(
+                                      value: "Yes",
+                                      groupValue: promised,
+                                      onChanged: (value) =>
+                                          setState(() => promised = value!),
+                                      activeColor: Colors.white,
+                                    ),
+                                    Text(
+                                      'Yes',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Radio<String>(
+                                      value: "No",
+                                      groupValue: promised,
+                                      onChanged: (value) =>
+                                          setState(() => promised = value!),
+                                      activeColor: Colors.white,
+                                    ),
+                                    Text(
+                                      'No',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
+                          ],
                         ),
                         const SizedBox(height: 20),
                         TextFormField(
                           controller: phoneNumberController,
-                          style:  const TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                           cursorColor: Colors.white,
                           decoration: InputDecoration(
                             labelText: 'Phone Number',
@@ -269,6 +296,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               Icons.phone,
                               color: Colors.white,
                             ),
+                            suffixIcon: IconButton(
+                                onPressed: () async {
+                                  final Contact contact = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => ContactPickerDemo()));
+                                  Map number = await parse(
+                                      contact.phones!.first.value.toString());
+                                  setState(() {
+                                    phoneNumberController.text = number['e164'];
+                                  });
+                                },
+                                icon: Icon(
+                                  Symbols.contacts,
+                                  color: Colors.white,
+                                )),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: const BorderSide(
@@ -281,34 +324,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 color: Colors.white,
                               ),
                             ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        TextFormField(
-                          controller: passwordController,
-                          style:  const TextStyle(color: Colors.white),
-                          cursorColor: Colors.white,
-                          decoration: InputDecoration(
-                            labelText: 'Password',
-                            labelStyle: const TextStyle(color: Colors.white),
-                            prefixIcon: const Icon(
-                              Icons.lock,
-                              color: Colors.white,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
+                            enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: const BorderSide(
                                 color: Colors.white,
                               ),
                             ),
                           ),
-                          obscureText: true,
                         ),
                         const SizedBox(height: 20),
                         DropdownButtonFormField(
@@ -441,7 +463,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           ),
                           const SizedBox(height: 20),
                         ],
-
                         if (selectedDistrict != null &&
                             selectedVillage != null) ...[
                           DropdownButtonFormField(
@@ -487,7 +508,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           ),
                           const SizedBox(height: 20),
                         ],
-
                         TextFormField(
                           controller: detailsController,
                           cursorColor: Colors.white,
@@ -495,9 +515,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           maxLines: 5,
                           decoration: InputDecoration(
                             hintText:
-                                "Enter interesting details about yourself (optional)",
+                                "Enter interesting details about the supporter (optional)",
                             labelStyle: const TextStyle(color: Colors.white),
-                            hintStyle:  TextStyle(color: Colors.white.withOpacity(0.8)),
+                            hintStyle:
+                                TextStyle(color: Colors.white.withOpacity(0.8)),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: const BorderSide(
@@ -510,11 +531,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 color: Colors.white,
                               ),
                             ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 20),
                         ElevatedButton(
-                          onPressed: register,
+                          onPressed: addMember,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xff009b65),
                             shape: RoundedRectangleBorder(
@@ -535,7 +562,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 ),
                                 SizedBox(width: 10),
                                 Text(
-                                  'Register',
+                                  'Add',
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -558,16 +585,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  register() async {
-    if (emailController.text.isNotEmpty &&
-        passwordController.text.isNotEmpty &&
-        fullNameController.text.isNotEmpty &&
+  addMember() async {
+    if (firstNameController.text.isNotEmpty &&
+        lastNameController.text.isNotEmpty &&
+        _selectedGender.isNotEmpty &&
         phoneNumberController.text.isNotEmpty &&
+        promised.isNotEmpty &&
         selectedDistrict != null &&
         selectedVillage != null &&
         selectedWard != null &&
-        selectedRegion != null &&
-        selectedPosition != null) {
+        selectedRegion != null) {
       showDialog(
           context: context,
           barrierDismissible: false,
@@ -585,27 +612,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
             );
           });
-
       Map number = await parse(phoneNumberController.text, region: "TZ");
-      authProvider.registerUser = User(
-          full_name: fullNameController.text,
-          phone: number['e164'],
-          email: emailController.text,
-          password: passwordController.text,
-          region_id: selectedRegion?.id,
-          ward_id: selectedWard?.id,
-          village_id: selectedVillage?.id,
-          district_id: selectedDistrict?.id,
-          position_id: selectedPosition?.id.toString(),
-          party_affiliation: "CCM",
-          other_candidate_details: detailsController.text.toString());
-
-      await authProvider.sendOtp(phone: number['e164'].toString());
-
+      await supporterProvider.addSupporter(
+          supporter: Supporter(
+              first_name: firstNameController.text,
+              last_name: lastNameController.text,
+              phone_number: number['e164'],
+              region_id: selectedRegion?.id,
+              ward_id: selectedWard?.id,
+              village_id: selectedVillage?.id,
+              district_id: selectedDistrict?.id,
+              other_supporter_details: detailsController.text.toString(),
+              promised: promised == 'Yes' ? 1 : 0,
+              gender: _selectedGender));
       Navigator.pop(context);
-      if (authProvider.otpSent) {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (_) => OTPConfirmationScreen()));
+      if (supporterProvider.supporterAdded) {
+        Navigator.pop(context);
       }
     }
   }

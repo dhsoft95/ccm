@@ -1,4 +1,7 @@
 import 'package:ccm/Providers/authProvider.dart';
+import 'package:ccm/Resources/formats.dart';
+import 'package:ccm/Screens/Auth/login.dart';
+import 'package:ccm/Services/storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +12,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
+    final storageProvider = Provider.of<LocalStorageProvider>(context);
     return Scaffold(
       appBar: AppBar(
         leading: Builder(
@@ -38,13 +42,26 @@ class ProfileScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const CircleAvatar(
-                radius: 60,
-                backgroundImage: AssetImage('assets/dhsoft.jpg'),
+              SizedBox(
+                width: 110,
+                height: 110,
+                child: Material(
+                  elevation: 2,
+                  color: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(60),
+                      side: BorderSide.none),
+                  child: Center(
+                      child: Text(
+                        storageProvider.user!.full_name.toString().extractInitials(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 42, fontWeight: FontWeight.w500,color: Colors.white),
+                      )),
+                ),
               ),
               const SizedBox(height: 16),
                Text(
-                authProvider.currentUser!.full_name.toString(),
+                 storageProvider.user!.full_name.toString(),
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -55,7 +72,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Software Developer',
+                storageProvider.user!.position_name.toString(),
                 style: TextStyle(
                   fontSize: 18,
                   color: Colors.grey[300],
@@ -72,37 +89,26 @@ class ProfileScreen extends StatelessWidget {
                   size: 24,
                 ),
                 title: Text(
-                  authProvider.currentUser!.email.toString(),
+                  storageProvider.user!.email.toString(),
                   style: TextStyle(color: Colors.white),
                 ),
               ),
-              const ListTile(
+               ListTile(
                 leading: Icon(
                   Icons.phone,
                   color: Colors.white,
                   size: 24,
                 ),
                 title: Text(
-                  '+1 (555) 123-4567',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              const ListTile(
-                leading: Icon(
-                  Icons.location_on,
-                  color: Colors.white,
-                  size: 24,
-                ),
-                title: Text(
-                  '123 Main Street, Cityville',
+                  '${storageProvider.user!.phone.toString()}',
                   style: TextStyle(color: Colors.white),
                 ),
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () {
-                  // Add your edit button functionality here
-                  print('Edit button pressed');
+                onPressed: () async{
+              await LocalStorage.logout();
+              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_)=>LoginScreen()), (route) => false);
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: const Color(0xff009b65), backgroundColor: Colors.white,
@@ -114,7 +120,7 @@ class ProfileScreen extends StatelessWidget {
                 child: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Text(
-                    'Edit',
+                    'Logout',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

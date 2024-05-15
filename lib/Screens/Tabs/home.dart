@@ -1,8 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ccm/Providers/authProvider.dart';
+import 'package:ccm/Resources/formats.dart';
+import 'package:ccm/Screens/Pages/addMember.dart';
 import 'package:ccm/Screens/Tabs/proEdit.dart';
 import 'package:ccm/Services/formats.dart';
 import 'package:ccm/Services/greetings.dart';
+import 'package:ccm/Services/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:iconly/iconly.dart';
@@ -23,6 +26,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late AuthProvider authProvider;
+  late LocalStorageProvider storageProvider;
   int _currentIndex = 0;
   final List<String> images = [
     'assets/samia.jpg',
@@ -34,6 +38,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void didChangeDependencies() {
     authProvider = Provider.of<AuthProvider>(context);
+    storageProvider = Provider.of<LocalStorageProvider>(context);
     super.didChangeDependencies();
   }
 
@@ -70,149 +75,115 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   bottomLeft: Radius.circular(30.0),
                 ),
               ),
-              child: Padding(
-                padding: EdgeInsets.all(MediaQuery.of(context).size.width *
-                    0.04), // 4% of the screen width
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              top: MediaQuery.of(context).size.height *
-                                  0.018), // 1.8% of the screen height
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.arrow_back,
-                              color: const Color(0xff0f674f),
-                              size: MediaQuery.of(context).size.width *
-                                  0.04, // 4% of the screen width
-                            ),
-                            onPressed: () {
-                              // Handle back button press
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              top: MediaQuery.of(context).size.height *
-                                  0.025), // 2.5% of the screen height
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.exit_to_app,
-                              color: const Color(0xff0f674f),
-                              size: MediaQuery.of(context).size.width *
-                                  0.05, // 5% of the screen width
-                            ),
-                            onPressed: () {
-                              // Handle logout button press
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                        height: MediaQuery.of(context).size.height *
-                            0.016), // 1.6% of the screen height
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              '${getGreeting()},',
-                              style: TextStyle(
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.056,
-                                // 5.6% of the screen width
-                                color: const Color(0xff0f674f),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              authProvider.currentUser!.full_name.toString(),
-                              style: TextStyle(
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.056,
-                                // 5.6% of the screen width
-                                color: const Color(0xff0f674f),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(
-                                height: MediaQuery.of(context).size.height *
-                                    0.008), // 0.8% of the screen height
-                            Text(
-                              ValueFormats.stingDateFormat(inputDate: DateTime.now().toLocal().toString()),
-                              style: TextStyle(
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.032,
-                                // 3.2% of the screen width
-                                color: const Color(0xff0f674f),
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                            Container(
-                              height: 2,
-                              // Reduced the height to make it a thinner line
-                              color: Colors.black,
-                              margin: EdgeInsets.symmetric(
-                                  vertical: MediaQuery.of(context).size.height *
-                                      0.01), // 1% of the screen height
-                            ),
-                            SizedBox(
-                                height: MediaQuery.of(context).size.height *
-                                    0.015), // 1.5% of the screen height
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  'Total',
-                                  style: TextStyle(
-                                    fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.04,
-                                    // 4% of the screen width
-                                    color: const Color(0xff0f674f),
-                                    fontWeight: FontWeight.bold,
-                                  ),
+              child: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.all(MediaQuery.of(context).size.width *
+                      0.04), // 4% of the screen width
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '${getGreeting()},',
+                                style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.056,
+                                  color: const Color(0xff0f674f),
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                Text(
-                                  ' 3000',
-                                  style: TextStyle(
-                                    fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.04,
-                                    // 4% of the screen width
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              ),
+                              Text(
+                                storageProvider.user!.full_name.toString(),
+                                style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.056,
+                                  color: const Color(0xff0f674f),
+                                  fontWeight: FontWeight.bold,
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width *
-                                0.01), // 2% of the screen width
-                        CircleAvatar(
-                          radius: MediaQuery.of(context).size.width *
-                              0.1, // 10% of the screen width
-                          backgroundColor: const Color(0xff0f674f),
-                          child: CircleAvatar(
-                            radius: MediaQuery.of(context).size.width *
-                                0.096, // 9.6% of the screen width
-                            backgroundImage:
-                                const AssetImage('assets/dhsoft.jpg'),
+                              ),
+                              SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.008),
+                              Text(
+                                ValueFormats.stingDateFormat(inputDate: DateTime.now().toLocal().toString()),
+                                style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.032,
+                                  // 3.2% of the screen width
+                                  color: const Color(0xff0f674f),
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                              Container(
+                                height: 2,
+                                // Reduced the height to make it a thinner line
+                                color: Colors.black,
+                                margin: EdgeInsets.symmetric(
+                                    vertical: MediaQuery.of(context).size.height *
+                                        0.01), // 1% of the screen height
+                              ),
+                              SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      0.015), // 1.5% of the screen height
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(
+                                    'Total',
+                                    style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.04,
+                                      // 4% of the screen width
+                                      color: const Color(0xff0f674f),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    ' 3000',
+                                    style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.04,
+                                      // 4% of the screen width
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width *
+                                  0.01), // 2% of the screen width
+                          SizedBox(
+                            width: 90,
+                            height: 90,
+                            child: Material(
+                              elevation: 2,
+                              color: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(60),
+                                  side: BorderSide.none),
+                              child: Center(
+                                  child: Text(
+                                    storageProvider.user!.full_name.toString().extractInitials(),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 42, fontWeight: FontWeight.w500,color: Colors.white),
+                                  )),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -271,7 +242,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ContactPickerDemo()));
+                              builder: (context) => AddSupporter()));
                         },
                         child: CustomCardTwo(
                           colors: [Color(0xff0f674f), Color(0xff0f674f)],
@@ -418,6 +389,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           FloatingActionButtonLocation.miniCenterDocked,
       bottomNavigationBar: AnimatedBottomNavigationBar(
         icons: const [Icons.home, Symbols.user_attributes_rounded],
+
         activeIndex: _currentIndex,
         gapLocation: GapLocation.none,
         inactiveColor: const Color(0xff009b65),
@@ -664,6 +636,7 @@ class RecentItemTile extends StatelessWidget {
         style: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 16,
+          color: Colors.white
         ),
       ),
       subtitle: Text(

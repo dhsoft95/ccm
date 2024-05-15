@@ -1,27 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
-
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Contact Picker', // More concise title
-      theme: ThemeData(
-        primarySwatch: Colors.teal, // Example color scheme
-        textTheme: TextTheme(
-          bodyText1: TextStyle(fontFamily: 'Roboto'), // Set font family
-        ),
-      ),
-      home: ContactPickerDemo(),
-    );
-  }
-}
 
 class ContactPickerDemo extends StatefulWidget {
   @override
@@ -33,10 +16,9 @@ class _ContactPickerDemoState extends State<ContactPickerDemo> {
   bool _isLoading = false;
   PermissionStatus status = PermissionStatus.denied; // Add default value
 
-
   @override
   void initState() {
-  _pickContacts();
+    _pickContacts();
     super.initState();
   }
 
@@ -44,13 +26,30 @@ class _ContactPickerDemoState extends State<ContactPickerDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(
+                CupertinoIcons.chevron_back,
+                size: 32,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            );
+          },
+        ),
         title: Text('Contact Picker'),
         centerTitle: true, // Center the title
         backgroundColor: Colors.teal, // Match app bar color
-        leading: IconButton(
-          icon: Icon(Icons.search), // Add search icon
-          onPressed: () => {}, // Implement search functionality later
-        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search), // Add search icon
+            onPressed: () => {}, // Implement search functionality later
+          )
+        ],
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
@@ -63,7 +62,7 @@ class _ContactPickerDemoState extends State<ContactPickerDemo> {
                 return ContactListTile(
                   contact: _contacts[index],
                   onClick: () {
-                    print(_contacts[index].toMap());
+                  Navigator.pop(context,_contacts[index]);
                   },
                 );
               },

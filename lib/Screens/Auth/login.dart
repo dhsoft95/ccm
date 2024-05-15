@@ -1,6 +1,7 @@
 import 'package:ccm/Models/User.dart';
 import 'package:ccm/Providers/authProvider.dart';
 import 'package:ccm/Screens/Auth/signup.dart';
+import 'package:ccm/Services/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -244,6 +245,7 @@ class _LoginPageState extends State<LoginScreen> {
       await authProvider.login(
           user: User(
               email: emailController.text, password: passwordController.text));
+      await Provider.of<LocalStorageProvider>(context,listen: false).initialize();
       Navigator.pop(context);
       if (authProvider.currentUser != null) {
         Navigator.pushAndRemoveUntil(

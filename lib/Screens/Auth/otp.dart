@@ -1,4 +1,9 @@
+import 'package:ccm/Providers/authProvider.dart';
+import 'package:ccm/Screens/Tabs/home.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../Services/storage.dart';
 
 class OTPConfirmationScreen extends StatefulWidget {
   const OTPConfirmationScreen({super.key});
@@ -9,6 +14,13 @@ class OTPConfirmationScreen extends StatefulWidget {
 
 class _OTPConfirmationScreenState extends State<OTPConfirmationScreen> {
   final TextEditingController otpController = TextEditingController();
+  late AuthProvider authProvider;
+
+  @override
+  void didChangeDependencies() {
+    authProvider = Provider.of<AuthProvider>(context);
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +68,8 @@ class _OTPConfirmationScreenState extends State<OTPConfirmationScreen> {
                       TextFormField(
                         controller: otpController,
                         keyboardType: TextInputType.number,
+                        style: TextStyle(color: Colors.white),
+                        cursorColor: Colors.white,
                         decoration: InputDecoration(
                           labelText: 'Enter OTP',
                           labelStyle: const TextStyle(color: Colors.white),
@@ -78,11 +92,8 @@ class _OTPConfirmationScreenState extends State<OTPConfirmationScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-
                       ElevatedButton(
-                        onPressed: () {
-                          // Handle OTP confirmation logic here
-                        },
+                        onPressed:otpVerification,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xff009b65),
                           shape: RoundedRectangleBorder(
@@ -104,7 +115,6 @@ class _OTPConfirmationScreenState extends State<OTPConfirmationScreen> {
                         ),
                       ),
                       const SizedBox(height: 10),
-
                       TextButton(
                         onPressed: () {
                           // Handle navigation back to the login screen
@@ -127,5 +137,39 @@ class _OTPConfirmationScreenState extends State<OTPConfirmationScreen> {
         ),
       ),
     );
+  }
+
+  otpVerification() async {
+    if (otpController.text.isNotEmpty) {
+      if (otpController.text.toString() ==
+          authProvider.otpVerifier.toString()) {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  alignment: Alignment.center,
+                  child: CircularProgressIndicator.adaptive(
+                    backgroundColor: Colors.white,
+                  ),
+                ),
+              );
+            });
+        await authProvider.register();
+        await Provider.of<LocalStorageProvider>(context,listen: false).initialize();
+        Navigator.pop(context);
+        if (authProvider.currentUser != null) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => DashboardScreen()),
+              (route) => false);
+        }
+      }
+    }
   }
 }

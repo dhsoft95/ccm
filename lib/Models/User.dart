@@ -1,3 +1,5 @@
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
+
 class User{
 
 
@@ -7,6 +9,7 @@ class User{
   String? phone;
   String? party_affiliation;
   String? position_id;
+  String? position_name;
   String? region_id;
   String? village_id;
   String? ward_id;
@@ -23,6 +26,7 @@ class User{
       this.phone,
       this.party_affiliation,
       this.position_id,
+      this.position_name,
       this.region_id,
       this.village_id,
       this.ward_id,
@@ -35,6 +39,8 @@ class User{
     return {
       "email":email,
       "full_name":full_name,
+      "position_name":position_name,
+      "phone":phone,
       "token":token
     };
   }
@@ -66,10 +72,23 @@ class User{
 
 
 
-  factory User.fromLoginJson(Map<String,dynamic> json){
+  factory User.fromAuthJson(Map<String,dynamic> json){
     return User(
       email: json['user']['email'],
       full_name:json['user']['full_name'],
+      phone:json['user']['phone'],
+        position_name:json['user']['position_name'],
+      token: json['token']
+    );
+  }
+
+  factory User.fromJson(Map<String,dynamic> json){
+
+    return User(
+      email: json['email'],
+      full_name:json['full_name'],
+      phone:json['phone'],
+        position_name:json['position_name'],
       token: json['token']
     );
   }
