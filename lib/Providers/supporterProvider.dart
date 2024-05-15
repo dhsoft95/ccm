@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 
 class SupporterProvider extends ChangeNotifier {
   bool _messageSent = false;
-  bool get messageSent =>_messageSent;
+  bool get messageSent => _messageSent;
   bool _supporterAdded = false;
   bool get supporterAdded => _supporterAdded;
   final _baseUrl = dotenv.env['API_URL'];
@@ -17,7 +17,8 @@ class SupporterProvider extends ChangeNotifier {
   Future addSupporter({required Supporter supporter}) async {
     String? token = await LocalStorage.getToken();
     try {
-      http.Response response = await http.post(Uri.parse("$_baseUrl/supporters"),
+      http.Response response = await http.post(
+          Uri.parse("$_baseUrl/supporters"),
           headers: {
             "Accept": "application/json",
             "Authorization": "Bearer $token"
@@ -50,23 +51,23 @@ class SupporterProvider extends ChangeNotifier {
         "Accept": "application/json",
         "Authorization": "Bearer $token"
       }, body: {
-        "message": message
+        "sms_content": message
       });
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         var output = jsonDecode(response.body);
-_messageSent=true;
+        _messageSent = true;
         notifyListeners();
 
         log(output.toString());
       } else {
         print(response.body);
-        _messageSent=false;
+        _messageSent = false;
         notifyListeners();
       }
     } catch (e) {
       print(e.toString());
-      _messageSent=false;
+      _messageSent = false;
       notifyListeners();
     }
   }
