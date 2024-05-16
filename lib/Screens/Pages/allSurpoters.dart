@@ -13,10 +13,11 @@ class SupportersList extends StatelessWidget {
       ),
       body: Consumer<SupporterProvider>(
         builder: (context, supporterProvider, child) {
+          Future<void> supporterData = supporterProvider.getSupporterData();
           return FutureBuilder(
-            future: supporterProvider.getSupporterData(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
+            future: supporterData,
+            builder: (context, AsyncSnapshot<void> snapshot) {
+              if (snapshot.connectionState != ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
@@ -26,9 +27,12 @@ class SupportersList extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final supporter = supporterProvider.supporters[index];
                     return ListTile(
-                      title: Text('${supporter.first_name} ${supporter.last_name}'),
-                      subtitle: Text(supporter.phone_number ?? 'No phone number'),
-                      trailing: Text(supporter.other_supporter_details ?? 'No details'),
+                      title: Text(
+                          '${supporter.first_name} ${supporter.last_name}'),
+                      subtitle:
+                          Text(supporter.phone_number ?? 'No phone number'),
+                      trailing: Text(
+                          supporter.other_supporter_details ?? 'No details'),
                     );
                   },
                 );

@@ -30,8 +30,9 @@ class SupporterProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         var output = jsonDecode(response.body);
-        List temp = output['supporters'];
-        _supporters = temp.where((element) => element is Map<String, dynamic>).map<Supporter>((json) => Supporter.fromJson(json)).toList();
+        List temp = output;
+        _supporters =
+            temp.map((supporter) => Supporter.fromJson(supporter)).toList();
         notifyListeners();
       } else {
         throw Exception('Failed to load supporters');
@@ -39,8 +40,8 @@ class SupporterProvider extends ChangeNotifier {
     } catch (e) {
       print(e.toString());
     }
-  }
 
+  }
 
   Future<void> addSupporter({required Supporter supporter}) async {
     String? token = await LocalStorage.getToken();
@@ -70,6 +71,7 @@ class SupporterProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   Future<void> sendMessage({required String message}) async {
     String? token = await LocalStorage.getToken();
     try {
