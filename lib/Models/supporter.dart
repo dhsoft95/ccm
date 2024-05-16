@@ -11,31 +11,33 @@ class Supporter {
   int? promised;
   String? other_supporter_details;
 
-  Supporter(
-      {this.first_name,
-      this.last_name,
-      this.dob,
-      this.gender,
-      this.region_id,
-      this.village_id,
-      this.ward_id,
-      this.district_id,
-      this.phone_number,
-      this.promised,
-      this.other_supporter_details});
+  Supporter({
+    this.first_name,
+    this.last_name,
+    this.dob,
+    this.gender,
+    this.region_id,
+    this.village_id,
+    this.ward_id,
+    this.district_id,
+    this.phone_number,
+    this.promised,
+    this.other_supporter_details,
+  });
 
-  Map toJson() {
+  Map<String, dynamic> toJson() {
     return {
       "first_name": first_name,
       "last_name": last_name,
+      "dob": dob,
       "gender": gender,
-      "region_id":region_id,
+      "region_id": region_id,
       "village_id": village_id,
       "ward_id": ward_id,
       "district_id": district_id,
       "phone_number": phone_number,
-      "promised":promised.toString(),
-      "other_supporter_details":other_supporter_details
+      "promised": promised?.toString(),
+      "other_supporter_details": other_supporter_details,
     };
   }
 
@@ -45,12 +47,12 @@ class Supporter {
       last_name: json['last_name'],
       dob: json['dob'],
       gender: json['gender'],
-      region_id: json['region_id'],
-      village_id: json['village_id'],
-      ward_id: json['ward_id'],
-      district_id: json['district_id'],
-      phone_number: json['phone_number'],
-      promised: int.parse(json['promised'].toString()),
+      region_id: json['region_id'].toString(),
+      village_id: json['village_id'].toString(),
+      ward_id: json['ward_id'].toString(),
+      district_id: json['district_id'].toString(),
+      phone_number: json['phone_number'].toString(),
+      promised: json['promised'] is int ? json['promised'] : int.tryParse(json['promised'].toString()) ?? 0,
       other_supporter_details: json['other_supporter_details'],
     );
   }

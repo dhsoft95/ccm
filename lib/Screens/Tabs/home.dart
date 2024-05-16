@@ -13,6 +13,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
+import '../Pages/allSurpoters.dart';
 import '../Pages/contacts.dart';
 import 'messages.dart';
 
@@ -219,8 +220,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          // Action to perform when the first icon is clicked
-                          // Add your desired functionality here
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => SupportersList()));
                         },
                         child: CustomCardTwo(
                           colors: [Color(0xff0f674f), Color(0xff0f674f)],

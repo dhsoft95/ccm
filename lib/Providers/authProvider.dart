@@ -28,10 +28,10 @@ class AuthProvider extends ChangeNotifier {
   bool _otpSent = false;
   bool get otpSent => _otpSent;
 
-  Future login({required User user}) async {
+  Future<String?> login({required User user}) async {
     try {
       http.Response response =
-          await http.post(Uri.parse("$_baseUrl/login"), body: user.toLogin());
+      await http.post(Uri.parse("$_baseUrl/login"), body: user.toLogin());
 
       if (response.statusCode == 200) {
         var output = jsonDecode(response.body);
@@ -40,11 +40,23 @@ class AuthProvider extends ChangeNotifier {
         await LocalStorage.storeToken(token: _currentUser!.token.toString());
         await LocalStorage.storeUserData(user: _currentUser!);
         notifyListeners();
+        return null; // No error, login successful
+      } else {
+        // Handle different HTTP error status codes
+        if (response.statusCode == 401) {
+          // Unauthorized: Invalid credentials
+          return "Invalid email or password.";
+        } else {
+          // Other errors
+          return "Login failed with status code ${response.statusCode}";
+        }
       }
     } catch (e) {
-      print(e.toString());
+      print("Error during login: $e");
+      return "An error occurred during login.";
     }
   }
+
 
   Future register() async {
     try {

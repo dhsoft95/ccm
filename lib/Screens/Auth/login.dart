@@ -1,3 +1,4 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:ccm/Models/User.dart';
 import 'package:ccm/Providers/authProvider.dart';
 import 'package:ccm/Screens/Auth/signup.dart';
@@ -22,20 +23,7 @@ class _LoginPageState extends State<LoginScreen> {
 
   late AuthProvider authProvider;
 
-  // final String loginMutation = r'''
-  //   mutation Login($username: String!, $password: String!) {
-  //     login(input: {
-  //       username: $username,
-  //       password: $password
-  //     }) {
-  //       access_token
-  //       user {
-  //         email
-  //         name
-  //       }
-  //     }
-  //   }
-  // ''';
+
 
   @override
   void didChangeDependencies() {
@@ -83,7 +71,7 @@ class _LoginPageState extends State<LoginScreen> {
                   ),
                 ),
                 Text(
-                  'Ccm App',
+                  'Ccm Yetu',
                   style: GoogleFonts.montserrat(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -223,36 +211,53 @@ class _LoginPageState extends State<LoginScreen> {
     );
   }
 
-  login() async {
+  void login() async {
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
       showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return Dialog(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              child: Container(
-                height: 100,
-                width: 100,
-                alignment: Alignment.center,
-                child: CircularProgressIndicator.adaptive(
-                  backgroundColor: Colors.white,
-                ),
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: Container(
+              height: 100,
+              width: 100,
+              alignment: Alignment.center,
+              child: CircularProgressIndicator.adaptive(
+                backgroundColor: Colors.green,
               ),
-            );
-          });
-      await authProvider.login(
-          user: User(
-              email: emailController.text, password: passwordController.text));
-      await Provider.of<LocalStorageProvider>(context,listen: false).initialize();
-      Navigator.pop(context);
-      if (authProvider.currentUser != null) {
+            ),
+          );
+        },
+      );
+      String? errorMessage = await authProvider.login(
+        user: User(
+          email: emailController.text,
+          password: passwordController.text,
+        ),
+      );
+      Navigator.pop(context); // Close loading dialog
+      if (errorMessage != null) {
+         return AnimatedSnackBar.material(
+           errorMessage,
+           type: AnimatedSnackBarType.error,
+           mobileSnackBarPosition: MobileSnackBarPosition.bottom, // Position of snackbar on mobile devices
+
+         ).show(context);
+
+      } else {
+        // Login successful, navigate to the dashboard
+        await Provider.of<LocalStorageProvider>(context, listen: false).initialize();
         Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (_) => DashboardScreen()),
-            (route) => false);
+          context,
+          MaterialPageRoute(builder: (_) => DashboardScreen()),
+              (route) => false,
+        );
       }
     }
   }
+
 }
+
+
