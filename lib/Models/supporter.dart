@@ -51,7 +51,7 @@ class Supporter {
       village_id: json['village_id'].toString(),
       ward_id: json['ward_id'].toString(),
       district_id: json['district_id'].toString(),
-      phone_number: json['phone_number'].toString(),
+      phone_number: json['phone_number'],
       promised: json['promised'] is int ? json['promised'] : int.tryParse(json['promised'].toString()) ?? 0,
       other_supporter_details: json['other_supporter_details'],
     );

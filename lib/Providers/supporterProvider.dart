@@ -44,13 +44,13 @@ class SupporterProvider extends ChangeNotifier {
   }
 
   Future<void> addSupporter({required Supporter supporter}) async {
-    String? token = await LocalStorage.getToken();
+    String? tokeni = await LocalStorage.getToken();
     try {
       http.Response response = await http.post(
         Uri.parse("$_baseUrl/supporters"),
         headers: {
           "Accept": "application/json",
-          "Authorization": "Bearer $token",
+          "Authorization": "Bearer $tokeni",
         },
         body: jsonEncode(supporter.toJson()),
       );

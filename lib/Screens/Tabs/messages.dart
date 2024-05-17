@@ -47,7 +47,7 @@ class _LoginPageState extends State<Messages> {
         ),
         backgroundColor: const Color(0xff009b65),
         title: Text(
-          'Bunge App',
+          'Ccm Yetu',
           style: GoogleFonts.roboto(
             fontSize: 24,
             fontWeight: FontWeight.normal,

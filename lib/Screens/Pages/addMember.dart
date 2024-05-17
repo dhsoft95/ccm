@@ -378,8 +378,8 @@ class _AddSupporterState extends State<AddSupporter> {
                         if (selectedRegion != null) ...[
                           DropdownButtonFormField(
                             decoration: InputDecoration(
-                              labelText: 'District',
-                              hintText: 'Select District',
+                              labelText: 'State',
+                              hintText: 'Select State',
                               labelStyle: const TextStyle(color: Colors.white),
                               hintStyle: const TextStyle(color: Colors.white),
                               prefixIcon: const Icon(

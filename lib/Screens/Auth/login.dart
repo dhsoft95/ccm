@@ -63,21 +63,21 @@ class _LoginPageState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Uchanguzi',
+                  'Ccm Yetu',
                   style: GoogleFonts.roboto(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
-                Text(
-                  'Ccm Yetu',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
+                // Text(
+                //   'Ccm Yetu',
+                //   style: GoogleFonts.montserrat(
+                //     fontSize: 14,
+                //     fontWeight: FontWeight.bold,
+                //     color: Colors.white,
+                //   ),
+                // ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
