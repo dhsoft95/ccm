@@ -29,7 +29,6 @@ class Supporter {
     return {
       "first_name": first_name,
       "last_name": last_name,
-      "dob": dob,
       "gender": gender,
       "region_id": region_id,
       "village_id": village_id,
@@ -45,7 +44,6 @@ class Supporter {
     return Supporter(
       first_name: json['first_name'],
       last_name: json['last_name'],
-      dob: json['dob'],
       gender: json['gender'],
       region_id: json['region_id'].toString(),
       village_id: json['village_id'].toString(),
