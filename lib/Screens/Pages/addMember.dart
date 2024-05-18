@@ -8,9 +8,11 @@ import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:iconly/iconly.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
 
 import '../../Models/locations.dart';
 import '../../Providers/dataProvider.dart';
+import '../Tabs/home.dart';
 import 'contacts.dart';
 
 class AddSupporter extends StatefulWidget {
@@ -47,7 +49,10 @@ class _AddSupporterState extends State<AddSupporter> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
+    double screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -72,7 +77,9 @@ class _AddSupporterState extends State<AddSupporter> {
                       Navigator.pop(context);
                     },
                     tooltip:
-                        MaterialLocalizations.of(context).backButtonTooltip,
+                    MaterialLocalizations
+                        .of(context)
+                        .backButtonTooltip,
                   );
                 },
               ),
@@ -131,7 +138,7 @@ class _AddSupporterState extends State<AddSupporter> {
                                   decoration: InputDecoration(
                                     labelText: 'First Name',
                                     labelStyle:
-                                        const TextStyle(color: Colors.white),
+                                    const TextStyle(color: Colors.white),
                                     prefixIcon: const Icon(
                                       Icons.person,
                                       color: Colors.white,
@@ -168,7 +175,7 @@ class _AddSupporterState extends State<AddSupporter> {
                                   decoration: InputDecoration(
                                     labelText: 'Last Name',
                                     labelStyle:
-                                        const TextStyle(color: Colors.white),
+                                    const TextStyle(color: Colors.white),
                                     prefixIcon: const Icon(
                                       Icons.person,
                                       color: Colors.white,
@@ -212,8 +219,10 @@ class _AddSupporterState extends State<AddSupporter> {
                                     Radio<String>(
                                       value: 'Male',
                                       groupValue: _selectedGender,
-                                      onChanged: (value) => setState(
-                                          () => _selectedGender = value!),
+                                      onChanged: (value) =>
+                                          setState(
+                                                  () =>
+                                              _selectedGender = value!),
                                       activeColor: Colors.white,
                                     ),
                                     Text(
@@ -227,8 +236,10 @@ class _AddSupporterState extends State<AddSupporter> {
                                     Radio<String>(
                                       value: 'Female',
                                       groupValue: _selectedGender,
-                                      onChanged: (value) => setState(
-                                          () => _selectedGender = value!),
+                                      onChanged: (value) =>
+                                          setState(
+                                                  () =>
+                                              _selectedGender = value!),
                                       activeColor: Colors.white,
                                     ),
                                     Text(
@@ -515,10 +526,10 @@ class _AddSupporterState extends State<AddSupporter> {
                           maxLines: 5,
                           decoration: InputDecoration(
                             hintText:
-                                "Enter interesting details about the supporter (optional)",
+                            "Enter interesting details about the supporter (optional)",
                             labelStyle: const TextStyle(color: Colors.white),
                             hintStyle:
-                                TextStyle(color: Colors.white.withOpacity(0.8)),
+                            TextStyle(color: Colors.white.withOpacity(0.8)),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: const BorderSide(
@@ -585,7 +596,7 @@ class _AddSupporterState extends State<AddSupporter> {
     );
   }
 
-  addMember() async {
+  void addMember() async {
     if (firstNameController.text.isNotEmpty &&
         lastNameController.text.isNotEmpty &&
         _selectedGender.isNotEmpty &&
@@ -596,39 +607,79 @@ class _AddSupporterState extends State<AddSupporter> {
         selectedWard != null &&
         selectedRegion != null) {
       showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return Dialog(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              child: Container(
-                height: 100,
-                width: 100,
-                alignment: Alignment.center,
-                child: CircularProgressIndicator.adaptive(
-                  backgroundColor: Colors.white,
-                ),
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: Container(
+              height: 100,
+              width: 100,
+              alignment: Alignment.center,
+              child: CircularProgressIndicator.adaptive(
+                backgroundColor: Colors.white,
               ),
-            );
-          });
+            ),
+          );
+        },
+      );
+
       Map number = await parse(phoneNumberController.text, region: "TZ");
-      await supporterProvider.addSupporter(
-          supporter: Supporter(
-              first_name: firstNameController.text,
-              last_name: lastNameController.text,
-              phone_number: number['e164'],
-              region_id: selectedRegion?.id,
-              ward_id: selectedWard?.id,
-              village_id: selectedVillage?.id,
-              district_id: selectedDistrict?.id,
-              other_supporter_details: detailsController.text.toString(),
-              promised: promised == 'Yes' ? 1 : 0,
-              gender: _selectedGender));
-      Navigator.pop(context);
-      if (supporterProvider.supporterAdded) {
-        Navigator.pop(context);
-      }
+
+      String message = await supporterProvider.addSupporter(
+        supporter: Supporter(
+          first_name: firstNameController.text,
+          last_name: lastNameController.text,
+          phone_number: number['e164'],
+          region_id: selectedRegion?.id,
+          ward_id: selectedWard?.id,
+          village_id: selectedVillage?.id,
+          district_id: selectedDistrict?.id,
+          other_supporter_details: detailsController.text.toString(),
+          promised: promised == 'Yes' ? 1 : 0,
+          gender: _selectedGender,
+        ),
+      );
+
+      Navigator.pop(context); // Close the progress indicator dialog
+
+      _showDialog(context, message); // Show the message dialog
     }
   }
+
+
+  void _showDialog(BuildContext context, String message) {
+    StylishDialog(
+      context: context,
+      alertType: message.contains('successfully')
+          ? StylishDialogType.SUCCESS
+          : StylishDialogType.ERROR,
+      title: Text('Message'),
+      content: Text(message),
+      confirmButton: ElevatedButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+          // Check if the message indicates success
+          if (message.contains('successfully')) {
+            // Navigate to the homepage
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => DashboardScreen(),
+              ),
+            );
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: message.contains('successfully') ? Colors.green : Colors.red,
+        ),
+        child: Text(
+          'OK',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+    ).show();
+  }
+
+
 }

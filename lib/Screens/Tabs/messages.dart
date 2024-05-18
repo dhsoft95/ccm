@@ -3,22 +3,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:stylish_dialog/stylish_dialog.dart';
+
+import 'home.dart';
 
 class Messages extends StatefulWidget {
-  const Messages({super.key});
+  const Messages({Key? key}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _MessagesState createState() => _MessagesState();
 }
 
-class _LoginPageState extends State<Messages> {
+class _MessagesState extends State<Messages> {
   late SupporterProvider supporterProvider;
-  final TextEditingController fromController = TextEditingController();
-  final TextEditingController toController = TextEditingController();
   final TextEditingController textMessagesController = TextEditingController();
-  List<String> sendTypeItems = ['Individual SMS', 'Group SMS'];
-
-  String? sendType;
 
   @override
   void didChangeDependencies() {
@@ -30,20 +28,16 @@ class _LoginPageState extends State<Messages> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(
-                CupertinoIcons.chevron_back,
-                color: Colors.white,
-                size: 32,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-            );
+        leading: IconButton(
+          icon: const Icon(
+            CupertinoIcons.chevron_back,
+            color: Colors.white,
+            size: 32,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
           },
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
         ),
         backgroundColor: const Color(0xff009b65),
         title: Text(
@@ -92,102 +86,10 @@ class _LoginPageState extends State<Messages> {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: <Widget>[
-                      // New form inputs for From, To, and Text Messages
-                      // TextField(
-                      //   controller: fromController,
-                      //   style: const TextStyle(color: Colors.white),
-                      //   decoration: InputDecoration(
-                      //     labelText: 'From',
-                      //     labelStyle: const TextStyle(color: Colors.white),
-                      //     prefixIcon: const Icon(
-                      //       Icons.person,
-                      //       color: Colors.white,
-                      //     ),
-                      //     border: OutlineInputBorder(
-                      //       borderRadius: BorderRadius.circular(10),
-                      //       borderSide: const BorderSide(
-                      //         color: Colors.white,
-                      //       ),
-                      //     ),
-                      //     focusedBorder: OutlineInputBorder(
-                      //       borderRadius: BorderRadius.circular(10),
-                      //       borderSide: const BorderSide(
-                      //         color: Colors.white,
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                      // const SizedBox(height: 20),
-                      // DropdownButtonFormField(
-                      //   decoration: InputDecoration(
-                      //     labelText: 'Send To',
-                      //     labelStyle: const TextStyle(color: Colors.white),
-                      //     prefixIcon: const Icon(
-                      //       Icons.add_chart_sharp,
-                      //       color: Colors.white,
-                      //     ),
-                      //     enabledBorder: OutlineInputBorder(
-                      //       borderRadius: BorderRadius.circular(10),
-                      //       borderSide: const BorderSide(
-                      //         color: Colors.white,
-                      //       ),
-                      //     ),
-                      //     focusedBorder: OutlineInputBorder(
-                      //       borderRadius: BorderRadius.circular(10),
-                      //       borderSide: const BorderSide(
-                      //         color: Colors.white,
-                      //       ),
-                      //     ),
-                      //   ),
-                      //   style: const TextStyle(color: Colors.white),
-                      //   value: sendType,
-                      //   onChanged: (String? newValue) {
-                      //     setState(() {
-                      //       sendType = newValue!;
-                      //     });
-                      //   },
-                      //   items: sendTypeItems
-                      //       .map<DropdownMenuItem<String>>((String value) {
-                      //     return DropdownMenuItem<String>(
-                      //       value: value,
-                      //       child: Text(
-                      //         value,
-                      //         style: const TextStyle(color: Colors.green),
-                      //       ),
-                      //     );
-                      //   }).toList(),
-                      // ),
-                      // const SizedBox(height: 20),
-                      // TextField(
-                      //   controller: toController,
-                      //   style: const TextStyle(color: Colors.white),
-                      //   decoration: InputDecoration(
-                      //     labelText: 'To',
-                      //     labelStyle: const TextStyle(color: Colors.white),
-                      //     prefixIcon: const Icon(
-                      //       Icons.email,
-                      //       color: Colors.white,
-                      //     ),
-                      //     border: OutlineInputBorder(
-                      //       borderRadius: BorderRadius.circular(10),
-                      //       borderSide: const BorderSide(
-                      //         color: Colors.white,
-                      //       ),
-                      //     ),
-                      //     focusedBorder: OutlineInputBorder(
-                      //       borderRadius: BorderRadius.circular(10),
-                      //       borderSide: const BorderSide(
-                      //         color: Colors.white,
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                      // const SizedBox(height: 20),
                       TextFormField(
                         controller: textMessagesController,
-                        maxLines: 5, // Set to null to allow multiple lines
-                        style: const TextStyle(
-                            color: Colors.white), // Set text color to white
+                        maxLines: 5,
+                        style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           hintText: 'Enter Message to send',
                           hintStyle: const TextStyle(color: Colors.grey),
@@ -205,13 +107,11 @@ class _LoginPageState extends State<Messages> {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: sendMessage,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color(0xff009b65), // Background color
+                          backgroundColor: const Color(0xff009b65),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -248,29 +148,65 @@ class _LoginPageState extends State<Messages> {
     );
   }
 
+  void _showDialog(BuildContext context, String message) {
+    StylishDialog(
+      context: context,
+      alertType: message.toLowerCase().contains('successfully')
+          ? StylishDialogType.SUCCESS
+          : StylishDialogType.ERROR,
+      title: Text('Message'),
+      content: Text(message),
+      confirmButton: ElevatedButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+          // Check if the message indicates success
+          if (message.toLowerCase().contains('successfully')) {
+            // Navigate to the homepage
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => DashboardScreen(),
+              ),
+            );
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: message.toLowerCase().contains('successfully')
+              ? Colors.green
+              : Colors.red,
+        ),
+        child: Text(
+          'OK',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+    ).show();
+  }
+
   sendMessage() async {
     if (textMessagesController.text.isNotEmpty) {
       showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return Dialog(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              child: Container(
-                height: 100,
-                width: 100,
-                alignment: Alignment.center,
-                child: CircularProgressIndicator.adaptive(
-                  backgroundColor: Colors.white,
-                ),
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: Container(
+              height: 100,
+              width: 100,
+              alignment: Alignment.center,
+              child: CircularProgressIndicator.adaptive(
+                backgroundColor: Colors.white,
               ),
-            );
-          });
-      await supporterProvider.sendMessage(message: textMessagesController.text);
-      Navigator.pop(context);
-      if (supporterProvider.messageSent) {
-        Navigator.pop(context);
+            ),
+          );
+        },
+      );
+      String? response = await supporterProvider.sendMessage(message: textMessagesController.text);
+      Navigator.pop(context); // Close the loading dialog
+      if (response != null) {
+        // Show the response message in a dialog
+        _showDialog(context, response);
       }
     }
   }

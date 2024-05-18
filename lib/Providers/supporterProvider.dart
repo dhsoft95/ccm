@@ -43,8 +43,9 @@ class SupporterProvider extends ChangeNotifier {
 
   }
 
-  Future<void> addSupporter({required Supporter supporter}) async {
+  Future<String> addSupporter({required Supporter supporter}) async {
     String? token = await LocalStorage.getToken();
+    String message = 'An error occurred';
     try {
       http.Response response = await http.post(
         Uri.parse("$_baseUrl/supporters"),
@@ -57,22 +58,34 @@ class SupporterProvider extends ChangeNotifier {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         var output = jsonDecode(response.body);
+        if (output.containsKey('message')) {
+          message = output['message'];
+        } else {
+          // In case 'message' key is missing, default success message
+          message = 'Supporter added successfully';
+        }
         _supporterAdded = true;
-        notifyListeners();
-        log(output.toString());
       } else {
-        print(response.body);
+        var output = jsonDecode(response.body);
+        if (output.containsKey('message')) {
+          message = output['message'];
+        } else {
+          // In case 'message' key is missing, default error message
+          message = 'Failed to add supporter';
+        }
         _supporterAdded = false;
-        notifyListeners();
       }
     } catch (e) {
       print(e.toString());
       _supporterAdded = false;
-      notifyListeners();
+      message = 'Failed to add supporter';
     }
+    notifyListeners();
+    return message;
   }
 
-  Future<void> sendMessage({required String message}) async {
+
+  Future<String?> sendMessage({required String message}) async {
     String? token = await LocalStorage.getToken();
     try {
       http.Response response = await http.post(
@@ -85,19 +98,17 @@ class SupporterProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        var output = jsonDecode(response.body);
-        _messageSent = true;
-        notifyListeners();
-        log(output.toString());
-      } else {
-        print(response.body);
-        _messageSent = false;
-        notifyListeners();
+        var jsonResponse = jsonDecode(response.body) as List<dynamic>;
+        if (jsonResponse.isNotEmpty) {
+          return jsonResponse[0]['message'] ?? 'Unknown message';
+        }
       }
+      return 'Unknown message';
     } catch (e) {
       print(e.toString());
-      _messageSent = false;
-      notifyListeners();
+      return null;
     }
   }
+
+
 }
