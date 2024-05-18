@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:ccm/Providers/authProvider.dart';
+import 'package:ccm/Providers/supporterProvider.dart';
 import 'package:ccm/Resources/formats.dart';
 import 'package:ccm/Screens/Pages/addMember.dart';
 import 'package:ccm/Screens/Tabs/proEdit.dart';
@@ -27,6 +28,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late AuthProvider authProvider;
+  late SupporterProvider supporterProvider;
   late LocalStorageProvider storageProvider;
   int _currentIndex = 0;
   final List<String> images = [
@@ -40,6 +42,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void didChangeDependencies() {
     authProvider = Provider.of<AuthProvider>(context);
     storageProvider = Provider.of<LocalStorageProvider>(context);
+    supporterProvider = Provider.of<SupporterProvider>(context);
     super.didChangeDependencies();
   }
 
@@ -278,7 +281,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ],
                 ),
                 height: 110,
-                child: const Padding(
+                child:  Padding(
                   padding: EdgeInsets.all(10.0),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -287,17 +290,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             title: 'Success',
                             colors: [Color(0xff0f674f), Color(0xff0f674f)],
                             icon: Icons.check_circle_outline,
-                            badgeCount: 10),
+                            badgeCount: int.parse(supporterProvider.messagesCount!.successful_count.toString())),
                         CustomCard(
                             title: 'Pending',
                             colors: [Color(0xff0f674f), Color(0xff0f674f)],
                             icon: Icons.access_time,
-                            badgeCount: 5),
+                            badgeCount: int.parse(supporterProvider.messagesCount!.pending_count.toString())),
                         CustomCard(
                             title: 'Failed',
                             colors: [Color(0xff0f674f), Color(0xff0f674f)],
                             icon: Icons.error_outline,
-                            badgeCount: 2),
+                            badgeCount: int.parse(supporterProvider.messagesCount!.failed_count.toString())),
                       ]),
                 ),
               ),

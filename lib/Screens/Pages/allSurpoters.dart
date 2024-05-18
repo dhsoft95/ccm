@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
-import 'package:ccm/Models/supporter.dart';
 import '../../Providers/supporterProvider.dart';
 
 class SupportersList extends StatefulWidget {
@@ -58,7 +57,7 @@ class _SupportersListState extends State<SupportersList> {
             : Consumer<SupporterProvider>(
           builder: (context, supporterProvider, child) {
             if (supporterProvider.supporters.isEmpty) {
-              return Center(child: Text('No supporters available.'));
+              return Center(child: Text('No supporters available',style: TextStyle(color: Colors.white,fontSize: 16),));
             } else {
               return AnimationLimiter(
                 child: ListView.builder(

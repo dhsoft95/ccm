@@ -6,11 +6,20 @@ import 'package:http/http.dart' as http;
 import 'package:ccm/Models/supporter.dart';
 import 'package:ccm/Services/storage.dart';
 
+import '../Models/messages.dart';
+
 class SupporterProvider extends ChangeNotifier {
   bool _messageSent = false;
   bool get messageSent => _messageSent;
   bool _supporterAdded = false;
   bool get supporterAdded => _supporterAdded;
+
+  Messages? _messagesCount;
+  Messages? get messagesCount=>_messagesCount;
+
+  List<Messages> _messages = [];
+  List<Messages> get messages => _messages;
+
   final _baseUrl = dotenv.env['API_URL'];
 
   List<Supporter> _supporters = [];
@@ -107,6 +116,51 @@ class SupporterProvider extends ChangeNotifier {
     } catch (e) {
       print(e.toString());
       return null;
+    }
+  }
+
+  Future<void> getMessages() async {
+    String? token = await LocalStorage.getToken();
+    try {
+      http.Response response = await http
+          .get(Uri.parse("$_baseUrl/recent-transactions"), headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      });
+
+      if (response.statusCode == 200) {
+        var output = jsonDecode(response.body);
+        List temp = output;
+
+        _messages =
+            temp.map((position) => Messages.fromJson(position)).toList();
+        log(output.toString());
+        notifyListeners();
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> getMessagesCount() async {
+    String? token = await LocalStorage.getToken();
+    try {
+      http.Response response = await http
+          .get(Uri.parse("$_baseUrl/count-messages"), headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      });
+
+      if (response.statusCode == 200) {
+        var output = jsonDecode(response.body);
+        _messagesCount = Messages.fromMessageCount(output);
+        log(output.toString());
+        notifyListeners();
+      }
+    } catch (e) {
+      print(e.toString());
     }
   }
 

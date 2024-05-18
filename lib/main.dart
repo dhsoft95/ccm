@@ -9,12 +9,12 @@ import 'Providers/supporterProvider.dart';
 import 'Screens/Auth/login.dart'; // Import your login screen
 
 final dataProvider = DataProvider();
+final supporters = SupporterProvider();
 final localProvider = LocalStorageProvider();
 
 Widget? _landingPage;
 
-
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await Future.wait([
@@ -22,22 +22,22 @@ void main() async{
     dataProvider.getPositionsData(),
     localProvider.initialize(),
   ]);
-  if(await LocalStorage.checkSession()){
+  if (await LocalStorage.checkSession()) {
+    await Future.wait([
+      supporters.getMessages(),
+      supporters.getMessagesCount(),
+    ]);
     _landingPage = DashboardScreen();
-  }else{
+  } else {
     _landingPage = LoginScreen();
   }
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (_)=>AuthProvider()),
-      ChangeNotifierProvider(create: (_)=>SupporterProvider()),
-      ChangeNotifierProvider.value(value: dataProvider),
-      ChangeNotifierProvider.value(value: localProvider)
-    ],
-      child: const MyApp()));
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => AuthProvider()),
+    ChangeNotifierProvider.value(value: supporters),
+    ChangeNotifierProvider.value(value: dataProvider),
+    ChangeNotifierProvider.value(value: localProvider)
+  ], child: const MyApp()));
 }
-
-
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -46,9 +46,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Bunge App',
-      theme: ThemeData.light(),
+      theme: ThemeData.light().copyWith(
+          appBarTheme: AppBarTheme(
+              iconTheme: IconThemeData(color: Colors.white),
+              centerTitle: true)),
 
-      debugShowCheckedModeBanner: false,// Set the dark theme
+      debugShowCheckedModeBanner: false, // Set the dark theme
       // Use themeMode to adopt from the system's theme
       themeMode: ThemeMode.system,
 

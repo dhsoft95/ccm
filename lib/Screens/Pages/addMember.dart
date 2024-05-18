@@ -9,7 +9,6 @@ import 'package:iconly/iconly.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
-
 import '../../Models/locations.dart';
 import '../../Providers/dataProvider.dart';
 import '../Tabs/home.dart';
