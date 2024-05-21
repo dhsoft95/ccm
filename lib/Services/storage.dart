@@ -43,7 +43,7 @@ class LocalStorage {
   static Future logout() async {
     await _storage.delete(key: 'token');
     await _storage.delete(key: 'user');
-    await _storage.delete(key: 'profile');
+    // await _storage.delete(key: 'profile');
   }
 
   static Future<bool> checkSession() async {

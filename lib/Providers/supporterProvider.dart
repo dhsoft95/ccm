@@ -11,11 +11,21 @@ import '../Models/messages.dart';
 class SupporterProvider extends ChangeNotifier {
   bool _messageSent = false;
   bool get messageSent => _messageSent;
+
   bool _supporterAdded = false;
+
+  set supporterAdded(bool value) {
+    _supporterAdded = value;
+  }
+
+  set supporters(List<Supporter> value) {
+    _supporters = value;
+  }
+
   bool get supporterAdded => _supporterAdded;
 
   Messages? _messagesCount;
-  Messages? get messagesCount=>_messagesCount;
+  Messages? get messagesCount => _messagesCount;
 
   List<Messages> _messages = [];
   List<Messages> get messages => _messages;
@@ -49,7 +59,6 @@ class SupporterProvider extends ChangeNotifier {
     } catch (e) {
       print(e.toString());
     }
-
   }
 
   Future<String> addSupporter({required Supporter supporter}) async {
@@ -93,7 +102,6 @@ class SupporterProvider extends ChangeNotifier {
     return message;
   }
 
-
   Future<String?> sendMessage({required String message}) async {
     String? token = await LocalStorage.getToken();
     try {
@@ -122,8 +130,8 @@ class SupporterProvider extends ChangeNotifier {
   Future<void> getMessages() async {
     String? token = await LocalStorage.getToken();
     try {
-      http.Response response = await http
-          .get(Uri.parse("$_baseUrl/recent-transactions"), headers: {
+      http.Response response =
+          await http.get(Uri.parse("$_baseUrl/recent-transactions"), headers: {
         "Accept": "application/json",
         "Content-Type": "application/json",
         "Authorization": "Bearer $token"
@@ -135,7 +143,6 @@ class SupporterProvider extends ChangeNotifier {
 
         _messages =
             temp.map((position) => Messages.fromJson(position)).toList();
-        log(output.toString());
         notifyListeners();
       }
     } catch (e) {
@@ -146,8 +153,8 @@ class SupporterProvider extends ChangeNotifier {
   Future<void> getMessagesCount() async {
     String? token = await LocalStorage.getToken();
     try {
-      http.Response response = await http
-          .get(Uri.parse("$_baseUrl/count-messages"), headers: {
+      http.Response response =
+          await http.get(Uri.parse("$_baseUrl/count-messages"), headers: {
         "Accept": "application/json",
         "Content-Type": "application/json",
         "Authorization": "Bearer $token"
@@ -156,13 +163,10 @@ class SupporterProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         var output = jsonDecode(response.body);
         _messagesCount = Messages.fromMessageCount(output);
-        log(output.toString());
         notifyListeners();
       }
     } catch (e) {
       print(e.toString());
     }
   }
-
-
 }
