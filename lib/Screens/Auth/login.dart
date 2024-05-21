@@ -1,6 +1,7 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:ccm/Models/User.dart';
 import 'package:ccm/Providers/authProvider.dart';
+import 'package:ccm/Providers/supporterProvider.dart';
 import 'package:ccm/Screens/Auth/signup.dart';
 import 'package:ccm/Services/storage.dart';
 import 'package:flutter/material.dart';
@@ -237,8 +238,9 @@ class _LoginPageState extends State<LoginScreen> {
           password: passwordController.text,
         ),
       );
-      Navigator.pop(context); // Close loading dialog
+
       if (errorMessage != null) {
+        Navigator.pop(context); // Close loading dialog
          return AnimatedSnackBar.material(
            errorMessage,
            type: AnimatedSnackBarType.error,
@@ -247,8 +249,14 @@ class _LoginPageState extends State<LoginScreen> {
          ).show(context);
 
       } else {
+
         // Login successful, navigate to the dashboard
-        await Provider.of<LocalStorageProvider>(context, listen: false).initialize();
+        await Future.wait([
+          Provider.of<LocalStorageProvider>(context, listen: false).initialize(),
+          Provider.of<SupporterProvider>(context, listen: false).getMessages(),
+          Provider.of<SupporterProvider>(context, listen: false).getMessagesCount(),
+        ]);
+        Navigator.pop(context); // Close loading dialog
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (_) => DashboardScreen()),

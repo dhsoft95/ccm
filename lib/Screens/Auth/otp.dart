@@ -3,6 +3,7 @@ import 'package:ccm/Screens/Tabs/home.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../Providers/supporterProvider.dart';
 import '../../Services/storage.dart';
 
 class OTPConfirmationScreen extends StatefulWidget {
@@ -93,7 +94,7 @@ class _OTPConfirmationScreenState extends State<OTPConfirmationScreen> {
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed:otpVerification,
+                        onPressed: otpVerification,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xff009b65),
                           shape: RoundedRectangleBorder(
@@ -161,7 +162,13 @@ class _OTPConfirmationScreenState extends State<OTPConfirmationScreen> {
               );
             });
         await authProvider.register();
-        await Provider.of<LocalStorageProvider>(context,listen: false).initialize();
+        await Future.wait([
+          Provider.of<LocalStorageProvider>(context, listen: false)
+              .initialize(),
+          Provider.of<SupporterProvider>(context, listen: false).getMessages(),
+          Provider.of<SupporterProvider>(context, listen: false)
+              .getMessagesCount(),
+        ]);
         Navigator.pop(context);
         if (authProvider.currentUser != null) {
           Navigator.pushAndRemoveUntil(
