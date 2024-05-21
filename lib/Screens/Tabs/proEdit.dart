@@ -1,4 +1,5 @@
 import 'package:ccm/Providers/authProvider.dart';
+import 'package:ccm/Providers/supporterProvider.dart';
 import 'package:ccm/Resources/formats.dart';
 import 'package:ccm/Screens/Auth/login.dart';
 import 'package:ccm/Services/storage.dart';
@@ -107,6 +108,8 @@ class ProfileScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () async{
               await LocalStorage.logout();
+              Provider.of<SupporterProvider>(context,listen: false).supporters=[];
+              Provider.of<SupporterProvider>(context,listen: false).supporterAdded=false;
               Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_)=>LoginScreen()), (route) => false);
                 },
                 style: ElevatedButton.styleFrom(
