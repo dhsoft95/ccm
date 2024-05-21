@@ -4,16 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
-
 import 'home.dart';
-
 class Messages extends StatefulWidget {
   const Messages({Key? key}) : super(key: key);
-
   @override
   _MessagesState createState() => _MessagesState();
 }
-
 class _MessagesState extends State<Messages> {
   late SupporterProvider supporterProvider;
   final TextEditingController textMessagesController = TextEditingController();

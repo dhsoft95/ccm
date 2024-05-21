@@ -345,7 +345,7 @@ class _AddSupporterState extends State<AddSupporter> {
                         const SizedBox(height: 20),
                         DropdownButtonFormField(
                           decoration: InputDecoration(
-                            labelText: 'Region',
+                            labelText: 'Mkoa',
                             hintText: "Select Region",
                             labelStyle: const TextStyle(color: Colors.white),
                             hintStyle: const TextStyle(color: Colors.white),
@@ -388,8 +388,8 @@ class _AddSupporterState extends State<AddSupporter> {
                         if (selectedRegion != null) ...[
                           DropdownButtonFormField(
                             decoration: InputDecoration(
-                              labelText: 'State',
-                              hintText: 'Select State',
+                              labelText: 'Jimbo',
+                              hintText: 'Chagua jimbo',
                               labelStyle: const TextStyle(color: Colors.white),
                               hintStyle: const TextStyle(color: Colors.white),
                               prefixIcon: const Icon(
@@ -432,8 +432,8 @@ class _AddSupporterState extends State<AddSupporter> {
                         if (selectedDistrict != null) ...[
                           DropdownButtonFormField(
                             decoration: InputDecoration(
-                              labelText: 'Village',
-                              hintText: 'Select Village',
+                              labelText: 'Kijiji',
+                              hintText: 'Chagua Kijiji',
                               labelStyle: const TextStyle(color: Colors.white),
                               hintStyle: const TextStyle(color: Colors.white),
                               prefixIcon: const Icon(
@@ -477,8 +477,8 @@ class _AddSupporterState extends State<AddSupporter> {
                             selectedVillage != null) ...[
                           DropdownButtonFormField(
                             decoration: InputDecoration(
-                              labelText: 'Ward',
-                              hintText: 'Select Ward',
+                              labelText: 'Kata',
+                              hintText: 'Chagua Kata',
                               labelStyle: const TextStyle(color: Colors.white),
                               hintStyle: const TextStyle(color: Colors.white),
                               prefixIcon: const Icon(
