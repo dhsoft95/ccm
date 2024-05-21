@@ -37,6 +37,7 @@ class SupporterProvider extends ChangeNotifier {
         },
       );
 
+
       if (response.statusCode == 200) {
         var output = jsonDecode(response.body);
         List temp = output;
@@ -142,7 +143,6 @@ class SupporterProvider extends ChangeNotifier {
       print(e.toString());
     }
   }
-
   Future<void> getMessagesCount() async {
     String? token = await LocalStorage.getToken();
     try {
@@ -152,7 +152,6 @@ class SupporterProvider extends ChangeNotifier {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token"
       });
-
       if (response.statusCode == 200) {
         var output = jsonDecode(response.body);
         _messagesCount = Messages.fromMessageCount(output);
@@ -163,6 +162,4 @@ class SupporterProvider extends ChangeNotifier {
       print(e.toString());
     }
   }
-
-
 }

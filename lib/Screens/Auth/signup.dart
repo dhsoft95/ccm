@@ -165,8 +165,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         DropdownButtonFormField(
                           style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
-                            labelText: 'Position',
-                            hintText: 'Select Position',
+                            labelText: 'Nafasi',
+                            hintText: 'Chagua Nafasi Unayogombea',
                             labelStyle: const TextStyle(color: Colors.white),
                             hintStyle: const TextStyle(color: Colors.white),
                             prefixIcon: const Icon(
@@ -209,7 +209,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           style:  const TextStyle(color: Colors.white),
                           cursorColor: Colors.white,
                           decoration: InputDecoration(
-                            labelText: 'Full Name',
+                            labelText: 'Majina yako mawili',
                             labelStyle: const TextStyle(color: Colors.white),
                             prefixIcon: const Icon(
                               Icons.person,
@@ -236,7 +236,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           cursorColor: Colors.white,
                           decoration: InputDecoration(
                             labelText: 'Email',
-                            hintText: "Enter email",
+                            hintText: "Weka barua pepe yako",
                             labelStyle: const TextStyle(color: Colors.white),
                             hintStyle:  TextStyle(color: Colors.white.withOpacity(0.7)),
                             prefixIcon: const Icon(
@@ -263,7 +263,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           style:  const TextStyle(color: Colors.white),
                           cursorColor: Colors.white,
                           decoration: InputDecoration(
-                            labelText: 'Phone Number',
+                            labelText: 'Namba ya simu ',
                             labelStyle: const TextStyle(color: Colors.white),
                             prefixIcon: const Icon(
                               Icons.phone,
@@ -313,8 +313,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         const SizedBox(height: 20),
                         DropdownButtonFormField(
                           decoration: InputDecoration(
-                            labelText: 'Region',
-                            hintText: "Select Region",
+                            labelText: 'Mkoa',
+                            hintText: "changua Mkoa",
                             labelStyle: const TextStyle(color: Colors.white),
                             hintStyle: const TextStyle(color: Colors.white),
                             prefixIcon: const Icon(
@@ -356,8 +356,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         if (selectedRegion != null) ...[
                           DropdownButtonFormField(
                             decoration: InputDecoration(
-                              labelText: 'District',
-                              hintText: 'Select District',
+                              labelText: 'Jimbo',
+                              hintText: 'Changua Jimbo',
                               labelStyle: const TextStyle(color: Colors.white),
                               hintStyle: const TextStyle(color: Colors.white),
                               prefixIcon: const Icon(
@@ -400,8 +400,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         if (selectedDistrict != null) ...[
                           DropdownButtonFormField(
                             decoration: InputDecoration(
-                              labelText: 'Village',
-                              hintText: 'Select Village',
+                              labelText: 'Kijji',
+                              hintText: 'Changu Kijiji',
                               labelStyle: const TextStyle(color: Colors.white),
                               hintStyle: const TextStyle(color: Colors.white),
                               prefixIcon: const Icon(
@@ -446,8 +446,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             selectedVillage != null) ...[
                           DropdownButtonFormField(
                             decoration: InputDecoration(
-                              labelText: 'Ward',
-                              hintText: 'Select Ward',
+                              labelText: 'Kata',
+                              hintText: 'chagua Kata ',
                               labelStyle: const TextStyle(color: Colors.white),
                               hintStyle: const TextStyle(color: Colors.white),
                               prefixIcon: const Icon(
