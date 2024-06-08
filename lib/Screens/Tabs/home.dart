@@ -3,6 +3,7 @@ import 'package:ccm/Providers/authProvider.dart';
 import 'package:ccm/Providers/supporterProvider.dart';
 import 'package:ccm/Resources/formats.dart';
 import 'package:ccm/Screens/Pages/addMember.dart';
+import 'package:ccm/Screens/Pages/payment.dart';
 import 'package:ccm/Screens/Tabs/proEdit.dart';
 import 'package:ccm/Services/formats.dart';
 import 'package:ccm/Services/greetings.dart';
@@ -139,7 +140,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text(
-                                    'Total',
+                                    'Total  Messages',
                                     style: TextStyle(
                                       fontSize:
                                           MediaQuery.of(context).size.width *
@@ -168,22 +169,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               width: MediaQuery.of(context).size.width *
                                   0.01), // 2% of the screen width
                           SizedBox(
-                            width: 90,
-                            height: 90,
+                            width: 100,
+                            height: 100,
                             child: Material(
                               elevation: 2,
                               color: Colors.transparent,
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(60),
-                                  side: BorderSide.none),
+                                borderRadius: BorderRadius.circular(60),
+                                side: BorderSide(
+                                  color: Colors.white, // Set the border color to white
+                                  width: 2.0, // Set the border width as needed
+                                ),
+                              ),
                               child: Center(
-                                  child: Text(
-                                    storageProvider.user!.full_name.toString().extractInitials(),
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 42, fontWeight: FontWeight.w500,color: Colors.white),
-                                  )),
+                                child: Text(
+                                  storageProvider.user!.full_name.toString().extractInitials(),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 42,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
+
                         ],
                       ),
                     ],
@@ -234,8 +245,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          // Action to perform when the second icon is clicked
-                          // Add your desired functionality here
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => SubscriptionScreen()));
                         },
                         child: CustomCardTwo(
                           colors: [Color(0xff0f674f), Color(0xff0f674f)],
@@ -328,52 +339,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 6.0,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: CarouselSlider(
-                options: CarouselOptions(
-                  height: MediaQuery.of(context).size.height * 0.09,
-                  // 18% of the screen height
-                  enlargeCenterPage: true,
-                  autoPlay: true,
-                  aspectRatio: 16 / 9,
-                  autoPlayCurve: Curves.decelerate,
-                  enableInfiniteScroll: true,
-                  autoPlayAnimationDuration: const Duration(milliseconds: 800),
-                  viewportFraction: 0.8,
-                ),
-                items: images.map((imagePath) {
-                  return Builder(
-                    builder: (BuildContext context) {
-                      return Container(
-                        width: MediaQuery.of(context).size.width,
-                        margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                        decoration: BoxDecoration(
-                          color: Colors.amber,
-                          borderRadius: BorderRadius.circular(8.0),
-                          image: DecorationImage(
-                            image: AssetImage(imagePath),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                }).toList(),
-              ),
-            ),
+            // const SizedBox(
+            //   height: 10,
+            // ),
+
           ],
         ),
       ),
