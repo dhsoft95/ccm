@@ -30,6 +30,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController detailsController = TextEditingController();
+  final TextEditingController _mtaa = TextEditingController();
   List<String> dropdownItems = [
     'Arusha',
     'Dar es Salaam',
@@ -311,7 +312,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           obscureText: true,
                         ),
                         const SizedBox(height: 20),
-                        DropdownButtonFormField(
+                        DropdownButtonFormField(iconEnabledColor: Colors.white,
                           decoration: InputDecoration(
                             labelText: 'Mkoa',
                             hintText: "changua Mkoa",
@@ -355,6 +356,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         const SizedBox(height: 20),
                         if (selectedRegion != null) ...[
                           DropdownButtonFormField(
+                            iconEnabledColor: Colors.white,
                             decoration: InputDecoration(
                               labelText: 'Jimbo',
                               hintText: 'Changua Jimbo',
@@ -399,55 +401,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ],
                         if (selectedDistrict != null) ...[
                           DropdownButtonFormField(
-                            decoration: InputDecoration(
-                              labelText: 'Kijji',
-                              hintText: 'Changu Kijiji',
-                              labelStyle: const TextStyle(color: Colors.white),
-                              hintStyle: const TextStyle(color: Colors.white),
-                              prefixIcon: const Icon(
-                                Icons.add_chart_sharp,
-                                color: Colors.white,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            style: const TextStyle(color: Colors.white),
-                            value: selectedVillage,
-                            onChanged: (newValue) {
-                              setState(() {
-                                selectedVillage = newValue!;
-                              });
-                            },
-                            items: selectedDistrict?.villages!
-                                .map<DropdownMenuItem>((value) {
-                              return DropdownMenuItem(
-                                value: value,
-                                child: Text(
-                                  value.name.toString(),
-                                  style: const TextStyle(color: Colors.green),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: 20),
-                        ],
-
-                        if (selectedDistrict != null &&
-                            selectedVillage != null) ...[
-                          DropdownButtonFormField(
+                            iconEnabledColor: Colors.white,
                             decoration: InputDecoration(
                               labelText: 'Kata',
-                              hintText: 'chagua Kata ',
+                              hintText: 'Chagua Kata ',
                               labelStyle: const TextStyle(color: Colors.white),
                               hintStyle: const TextStyle(color: Colors.white),
                               prefixIcon: const Icon(
@@ -484,6 +441,33 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 ),
                               );
                             }).toList(),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+
+                        if (selectedDistrict != null &&
+                            selectedWard != null) ...[
+                          TextFormField(
+                            controller: _mtaa,
+                            style:  const TextStyle(color: Colors.white),
+                            cursorColor: Colors.white,
+                            decoration: InputDecoration(
+                              labelText: 'Mtaa/Kijiji',
+                              labelStyle: const TextStyle(color: Colors.white),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              prefixIcon: Icon(IconlyLight.home, color: Colors.white),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
                           ),
                           const SizedBox(height: 20),
                         ],
@@ -563,8 +547,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         passwordController.text.isNotEmpty &&
         fullNameController.text.isNotEmpty &&
         phoneNumberController.text.isNotEmpty &&
+        _mtaa.text.isNotEmpty &&
         selectedDistrict != null &&
-        selectedVillage != null &&
         selectedWard != null &&
         selectedRegion != null &&
         selectedPosition != null) {
@@ -594,7 +578,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           password: passwordController.text,
           region_id: selectedRegion?.id,
           ward_id: selectedWard?.id,
-          village_id: selectedVillage?.id,
+          village_id: _mtaa.text.toString(),
           district_id: selectedDistrict?.id,
           position_id: selectedPosition?.id.toString(),
           party_affiliation: "CCM",

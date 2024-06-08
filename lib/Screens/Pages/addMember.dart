@@ -30,6 +30,7 @@ class _AddSupporterState extends State<AddSupporter> {
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController detailsController = TextEditingController();
+  final TextEditingController _mtaa = TextEditingController();
 
   District? selectedDistrict;
   Village? selectedVillage;
@@ -387,9 +388,10 @@ class _AddSupporterState extends State<AddSupporter> {
                         const SizedBox(height: 20),
                         if (selectedRegion != null) ...[
                           DropdownButtonFormField(
+                            iconEnabledColor: Colors.white,
                             decoration: InputDecoration(
                               labelText: 'Jimbo',
-                              hintText: 'Chagua jimbo',
+                              hintText: 'Changua Jimbo',
                               labelStyle: const TextStyle(color: Colors.white),
                               hintStyle: const TextStyle(color: Colors.white),
                               prefixIcon: const Icon(
@@ -431,54 +433,10 @@ class _AddSupporterState extends State<AddSupporter> {
                         ],
                         if (selectedDistrict != null) ...[
                           DropdownButtonFormField(
-                            decoration: InputDecoration(
-                              labelText: 'Kijiji',
-                              hintText: 'Chagua Kijiji',
-                              labelStyle: const TextStyle(color: Colors.white),
-                              hintStyle: const TextStyle(color: Colors.white),
-                              prefixIcon: const Icon(
-                                Icons.add_chart_sharp,
-                                color: Colors.white,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            style: const TextStyle(color: Colors.white),
-                            value: selectedVillage,
-                            onChanged: (newValue) {
-                              setState(() {
-                                selectedVillage = newValue!;
-                              });
-                            },
-                            items: selectedDistrict?.villages!
-                                .map<DropdownMenuItem>((value) {
-                              return DropdownMenuItem(
-                                value: value,
-                                child: Text(
-                                  value.name.toString(),
-                                  style: const TextStyle(color: Colors.green),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: 20),
-                        ],
-                        if (selectedDistrict != null &&
-                            selectedVillage != null) ...[
-                          DropdownButtonFormField(
+                            iconEnabledColor: Colors.white,
                             decoration: InputDecoration(
                               labelText: 'Kata',
-                              hintText: 'Chagua Kata',
+                              hintText: 'Chagua Kata ',
                               labelStyle: const TextStyle(color: Colors.white),
                               hintStyle: const TextStyle(color: Colors.white),
                               prefixIcon: const Icon(
@@ -515,6 +473,32 @@ class _AddSupporterState extends State<AddSupporter> {
                                 ),
                               );
                             }).toList(),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                        if (selectedDistrict != null &&
+                            selectedWard != null) ...[
+                          TextFormField(
+                            controller: _mtaa,
+                            style:  const TextStyle(color: Colors.white),
+                            cursorColor: Colors.white,
+                            decoration: InputDecoration(
+                              labelText: 'Mtaa/Kijiji',
+                              labelStyle: const TextStyle(color: Colors.white),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              prefixIcon: Icon(IconlyLight.home, color: Colors.white),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: const BorderSide(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
                           ),
                           const SizedBox(height: 20),
                         ],
@@ -600,9 +584,9 @@ class _AddSupporterState extends State<AddSupporter> {
         lastNameController.text.isNotEmpty &&
         _selectedGender.isNotEmpty &&
         phoneNumberController.text.isNotEmpty &&
+        _mtaa.text.isNotEmpty &&
         promised.isNotEmpty &&
         selectedDistrict != null &&
-        selectedVillage != null &&
         selectedWard != null &&
         selectedRegion != null) {
       showDialog(
@@ -633,7 +617,7 @@ class _AddSupporterState extends State<AddSupporter> {
           phone_number: number['e164'],
           region_id: selectedRegion?.id,
           ward_id: selectedWard?.id,
-          village_id: selectedVillage?.id,
+          village_id: _mtaa.text.toString(),
           district_id: selectedDistrict?.id,
           other_supporter_details: detailsController.text.toString(),
           promised: promised == 'Yes' ? 1 : 0,
