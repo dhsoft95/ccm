@@ -40,7 +40,12 @@ class _EditProfileDataState extends State<EditProfileData> {
       if (storageProvider.user!.full_name != null) {
         _name = TextEditingController(text: storageProvider.user!.full_name);
       }
-    } catch (e) {}
+      if(storageProvider.user!.position_name != null){
+        selectedPosition =Provider.of<DataProvider>(context,listen: false).positions.firstWhere((element) => element.name.toString().toLowerCase()==storageProvider.user!.position_name.toString().toLowerCase());
+      }
+    } catch (e) {
+      print(e.toString());
+    }
     super.initState();
   }
 
@@ -285,6 +290,17 @@ class _EditProfileDataState extends State<EditProfileData> {
           phone: _phone.text,
           position_id: selectedPosition!.id,
         ));
+        if(authProvider.profileUpdated){
+          await storageProvider.initialize();
+          Navigator.pop(context);
+          Navigator.pop(context);
+        }else{
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Failed to update profile",style: TextStyle(fontSize: 16),),
+            backgroundColor: Colors.red,
+          ));
+        }
       }
     }
   }

@@ -25,6 +25,14 @@ class AuthProvider extends ChangeNotifier {
 
   User? get currentUser => _currentUser;
 
+  bool _profileUpdated = false;
+
+  bool get profileUpdated => _profileUpdated;
+
+  set profileUpdated(bool value) {
+    _profileUpdated = value;
+  }
+
   bool _otpSent = false;
   bool get otpSent => _otpSent;
 
@@ -87,9 +95,9 @@ class AuthProvider extends ChangeNotifier {
     User? user = result[0] as User?;
     String? token = result[1] as String?;
     try {
-      http.Response response = await http.post(
+      http.Response response = await http.put(
           Uri.parse(
-            "$_baseUrl/update-profile",
+            "$_baseUrl/candidate-update",
           ),
           headers: {
             "Accept": "application/json",
@@ -99,17 +107,26 @@ class AuthProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         var output = jsonDecode(response.body);
-        log(response.body);
 
-        // _currentUser = User.fromAuthJson(output['data']);
-        // await LocalStorage.storeUserData(user: _currentUser!);
+        _currentUser = User.fromAuthJson(output['data']);
+        await LocalStorage.storeUserData(user: _currentUser!);
+        _profileUpdated = true;
         notifyListeners();
       } else {
-        print(response.statusCode.toString());
-        print(response.body);
+        if (kDebugMode) {
+          print(response.statusCode.toString());
+          print(response.body);
+        }
+
+        _profileUpdated = false;
+        notifyListeners();
       }
     } catch (e) {
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
+      _profileUpdated = false;
+      notifyListeners();
     }
   }
 
