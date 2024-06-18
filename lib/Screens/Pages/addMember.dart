@@ -49,10 +49,7 @@ class _AddSupporterState extends State<AddSupporter> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -77,9 +74,7 @@ class _AddSupporterState extends State<AddSupporter> {
                       Navigator.pop(context);
                     },
                     tooltip:
-                    MaterialLocalizations
-                        .of(context)
-                        .backButtonTooltip,
+                        MaterialLocalizations.of(context).backButtonTooltip,
                   );
                 },
               ),
@@ -138,7 +133,7 @@ class _AddSupporterState extends State<AddSupporter> {
                                   decoration: InputDecoration(
                                     labelText: 'First Name',
                                     labelStyle:
-                                    const TextStyle(color: Colors.white),
+                                        const TextStyle(color: Colors.white),
                                     prefixIcon: const Icon(
                                       Icons.person,
                                       color: Colors.white,
@@ -175,7 +170,7 @@ class _AddSupporterState extends State<AddSupporter> {
                                   decoration: InputDecoration(
                                     labelText: 'Last Name',
                                     labelStyle:
-                                    const TextStyle(color: Colors.white),
+                                        const TextStyle(color: Colors.white),
                                     prefixIcon: const Icon(
                                       Icons.person,
                                       color: Colors.white,
@@ -219,10 +214,8 @@ class _AddSupporterState extends State<AddSupporter> {
                                     Radio<String>(
                                       value: 'Male',
                                       groupValue: _selectedGender,
-                                      onChanged: (value) =>
-                                          setState(
-                                                  () =>
-                                              _selectedGender = value!),
+                                      onChanged: (value) => setState(
+                                          () => _selectedGender = value!),
                                       activeColor: Colors.white,
                                     ),
                                     Text(
@@ -236,10 +229,8 @@ class _AddSupporterState extends State<AddSupporter> {
                                     Radio<String>(
                                       value: 'Female',
                                       groupValue: _selectedGender,
-                                      onChanged: (value) =>
-                                          setState(
-                                                  () =>
-                                              _selectedGender = value!),
+                                      onChanged: (value) => setState(
+                                          () => _selectedGender = value!),
                                       activeColor: Colors.white,
                                     ),
                                     Text(
@@ -344,164 +335,165 @@ class _AddSupporterState extends State<AddSupporter> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        DropdownButtonFormField(
-                          decoration: InputDecoration(
-                            labelText: 'Mkoa',
-                            hintText: "Select Region",
-                            labelStyle: const TextStyle(color: Colors.white),
-                            hintStyle: const TextStyle(color: Colors.white),
-                            prefixIcon: const Icon(
-                              Icons.home,
-                              color: Colors.white,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          style: const TextStyle(color: Colors.white),
-                          value: selectedRegion,
-                          onChanged: (newValue) {
-                            setState(() {
-                              selectedRegion = newValue!;
-                              selectedDistrict = null;
-                            });
-                          },
-                          items: _regions.map<DropdownMenuItem>((Region value) {
-                            return DropdownMenuItem(
-                              value: value,
-                              child: Text(
-                                value.name.toString(),
-                                style: const TextStyle(color: Colors.green),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                        const SizedBox(height: 20),
-                        if (selectedRegion != null) ...[
-                          DropdownButtonFormField(
-                            iconEnabledColor: Colors.white,
-                            decoration: InputDecoration(
-                              labelText: 'Jimbo',
-                              hintText: 'Changua Jimbo',
-                              labelStyle: const TextStyle(color: Colors.white),
-                              hintStyle: const TextStyle(color: Colors.white),
-                              prefixIcon: const Icon(
-                                IconlyLight.location,
-                                color: Colors.white,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            style: const TextStyle(color: Colors.white),
-                            value: selectedDistrict,
-                            onChanged: (newValue) {
-                              setState(() {
-                                selectedDistrict = newValue!;
-                              });
-                            },
-                            items: selectedRegion?.districts!
-                                .map<DropdownMenuItem>((value) {
-                              return DropdownMenuItem(
-                                value: value,
-                                child: Text(
-                                  value.name.toString(),
-                                  style: const TextStyle(color: Colors.green),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: 20),
-                        ],
-                        if (selectedDistrict != null) ...[
-                          DropdownButtonFormField(
-                            iconEnabledColor: Colors.white,
-                            decoration: InputDecoration(
-                              labelText: 'Kata',
-                              hintText: 'Chagua Kata ',
-                              labelStyle: const TextStyle(color: Colors.white),
-                              hintStyle: const TextStyle(color: Colors.white),
-                              prefixIcon: const Icon(
-                                Icons.add_chart_sharp,
-                                color: Colors.white,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            style: const TextStyle(color: Colors.white),
-                            value: selectedWard,
-                            onChanged: (newValue) {
-                              setState(() {
-                                selectedWard = newValue!;
-                              });
-                            },
-                            items: selectedDistrict?.wards!
-                                .map<DropdownMenuItem>((value) {
-                              return DropdownMenuItem(
-                                value: value,
-                                child: Text(
-                                  value.name.toString(),
-                                  style: const TextStyle(color: Colors.green),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: 20),
-                        ],
-                        if (selectedDistrict != null &&
-                            selectedWard != null) ...[
-                          TextFormField(
-                            controller: _mtaa,
-                            style:  const TextStyle(color: Colors.white),
-                            cursorColor: Colors.white,
-                            decoration: InputDecoration(
-                              labelText: 'Mtaa/Kijiji',
-                              labelStyle: const TextStyle(color: Colors.white),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              prefixIcon: Icon(IconlyLight.home, color: Colors.white),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                        ],
+                        // DropdownButtonFormField(
+                        //   decoration: InputDecoration(
+                        //     labelText: 'Mkoa',
+                        //     hintText: "Select Region",
+                        //     labelStyle: const TextStyle(color: Colors.white),
+                        //     hintStyle: const TextStyle(color: Colors.white),
+                        //     prefixIcon: const Icon(
+                        //       Icons.home,
+                        //       color: Colors.white,
+                        //     ),
+                        //     enabledBorder: OutlineInputBorder(
+                        //       borderRadius: BorderRadius.circular(10),
+                        //       borderSide: const BorderSide(
+                        //         color: Colors.white,
+                        //       ),
+                        //     ),
+                        //     focusedBorder: OutlineInputBorder(
+                        //       borderRadius: BorderRadius.circular(10),
+                        //       borderSide: const BorderSide(
+                        //         color: Colors.white,
+                        //       ),
+                        //     ),
+                        //   ),
+                        //   style: const TextStyle(color: Colors.white),
+                        //   value: selectedRegion,
+                        //   onChanged: (newValue) {
+                        //     setState(() {
+                        //       selectedRegion = newValue!;
+                        //       selectedDistrict = null;
+                        //     });
+                        //   },
+                        //   items: _regions.map<DropdownMenuItem>((Region value) {
+                        //     return DropdownMenuItem(
+                        //       value: value,
+                        //       child: Text(
+                        //         value.name.toString(),
+                        //         style: const TextStyle(color: Colors.green),
+                        //       ),
+                        //     );
+                        //   }).toList(),
+                        // ),
+                        // const SizedBox(height: 20),
+                        // if (selectedRegion != null) ...[
+                        //   DropdownButtonFormField(
+                        //     iconEnabledColor: Colors.white,
+                        //     decoration: InputDecoration(
+                        //       labelText: 'Jimbo',
+                        //       hintText: 'Changua Jimbo',
+                        //       labelStyle: const TextStyle(color: Colors.white),
+                        //       hintStyle: const TextStyle(color: Colors.white),
+                        //       prefixIcon: const Icon(
+                        //         IconlyLight.location,
+                        //         color: Colors.white,
+                        //       ),
+                        //       enabledBorder: OutlineInputBorder(
+                        //         borderRadius: BorderRadius.circular(10),
+                        //         borderSide: const BorderSide(
+                        //           color: Colors.white,
+                        //         ),
+                        //       ),
+                        //       focusedBorder: OutlineInputBorder(
+                        //         borderRadius: BorderRadius.circular(10),
+                        //         borderSide: const BorderSide(
+                        //           color: Colors.white,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     style: const TextStyle(color: Colors.white),
+                        //     value: selectedDistrict,
+                        //     onChanged: (newValue) {
+                        //       setState(() {
+                        //         selectedDistrict = newValue!;
+                        //       });
+                        //     },
+                        //     items: selectedRegion?.districts!
+                        //         .map<DropdownMenuItem>((value) {
+                        //       return DropdownMenuItem(
+                        //         value: value,
+                        //         child: Text(
+                        //           value.name.toString(),
+                        //           style: const TextStyle(color: Colors.green),
+                        //         ),
+                        //       );
+                        //     }).toList(),
+                        //   ),
+                        //   const SizedBox(height: 20),
+                        // ],
+                        // if (selectedDistrict != null) ...[
+                        //   DropdownButtonFormField(
+                        //     iconEnabledColor: Colors.white,
+                        //     decoration: InputDecoration(
+                        //       labelText: 'Kata',
+                        //       hintText: 'Chagua Kata ',
+                        //       labelStyle: const TextStyle(color: Colors.white),
+                        //       hintStyle: const TextStyle(color: Colors.white),
+                        //       prefixIcon: const Icon(
+                        //         Icons.add_chart_sharp,
+                        //         color: Colors.white,
+                        //       ),
+                        //       enabledBorder: OutlineInputBorder(
+                        //         borderRadius: BorderRadius.circular(10),
+                        //         borderSide: const BorderSide(
+                        //           color: Colors.white,
+                        //         ),
+                        //       ),
+                        //       focusedBorder: OutlineInputBorder(
+                        //         borderRadius: BorderRadius.circular(10),
+                        //         borderSide: const BorderSide(
+                        //           color: Colors.white,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     style: const TextStyle(color: Colors.white),
+                        //     value: selectedWard,
+                        //     onChanged: (newValue) {
+                        //       setState(() {
+                        //         selectedWard = newValue!;
+                        //       });
+                        //     },
+                        //     items: selectedDistrict?.wards!
+                        //         .map<DropdownMenuItem>((value) {
+                        //       return DropdownMenuItem(
+                        //         value: value,
+                        //         child: Text(
+                        //           value.name.toString(),
+                        //           style: const TextStyle(color: Colors.green),
+                        //         ),
+                        //       );
+                        //     }).toList(),
+                        //   ),
+                        //   const SizedBox(height: 20),
+                        // ],
+                        // if (selectedDistrict != null &&
+                        //     selectedWard != null) ...[
+                        //   TextFormField(
+                        //     controller: _mtaa,
+                        //     style: const TextStyle(color: Colors.white),
+                        //     cursorColor: Colors.white,
+                        //     decoration: InputDecoration(
+                        //       labelText: 'Mtaa/Kijiji',
+                        //       labelStyle: const TextStyle(color: Colors.white),
+                        //       border: OutlineInputBorder(
+                        //         borderRadius: BorderRadius.circular(10),
+                        //         borderSide: const BorderSide(
+                        //           color: Colors.white,
+                        //         ),
+                        //       ),
+                        //       prefixIcon:
+                        //           Icon(IconlyLight.home, color: Colors.white),
+                        //       focusedBorder: OutlineInputBorder(
+                        //         borderRadius: BorderRadius.circular(10),
+                        //         borderSide: const BorderSide(
+                        //           color: Colors.white,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        //   const SizedBox(height: 20),
+                        // ],
                         TextFormField(
                           controller: detailsController,
                           cursorColor: Colors.white,
@@ -509,10 +501,10 @@ class _AddSupporterState extends State<AddSupporter> {
                           maxLines: 5,
                           decoration: InputDecoration(
                             hintText:
-                            "Enter interesting details about the supporter (optional)",
+                                "Enter interesting details about the supporter (optional)",
                             labelStyle: const TextStyle(color: Colors.white),
                             hintStyle:
-                            TextStyle(color: Colors.white.withOpacity(0.8)),
+                                TextStyle(color: Colors.white.withOpacity(0.8)),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: const BorderSide(
@@ -584,11 +576,8 @@ class _AddSupporterState extends State<AddSupporter> {
         lastNameController.text.isNotEmpty &&
         _selectedGender.isNotEmpty &&
         phoneNumberController.text.isNotEmpty &&
-        _mtaa.text.isNotEmpty &&
-        promised.isNotEmpty &&
-        selectedDistrict != null &&
-        selectedWard != null &&
-        selectedRegion != null) {
+        promised.isNotEmpty
+    ) {
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -631,7 +620,6 @@ class _AddSupporterState extends State<AddSupporter> {
     }
   }
 
-
   void _showDialog(BuildContext context, String message) {
     StylishDialog(
       context: context,
@@ -654,7 +642,8 @@ class _AddSupporterState extends State<AddSupporter> {
           }
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: message.contains('successfully') ? Colors.green : Colors.red,
+          backgroundColor:
+              message.contains('successfully') ? Colors.green : Colors.red,
         ),
         child: Text(
           'OK',
@@ -663,6 +652,4 @@ class _AddSupporterState extends State<AddSupporter> {
       ),
     ).show();
   }
-
-
 }

@@ -31,7 +31,7 @@ class AuthProvider extends ChangeNotifier {
   Future<String?> login({required User user}) async {
     try {
       http.Response response =
-      await http.post(Uri.parse("$_baseUrl/login"), body: user.toLogin());
+          await http.post(Uri.parse("$_baseUrl/login"), body: user.toLogin());
 
       if (response.statusCode == 200) {
         var output = jsonDecode(response.body);
@@ -57,7 +57,6 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-
   Future register() async {
     try {
       http.Response response = await http.post(Uri.parse("$_baseUrl/register"),
@@ -70,6 +69,40 @@ class AuthProvider extends ChangeNotifier {
         _currentUser = User.fromAuthJson(output['data']);
         await LocalStorage.storeToken(token: _currentUser!.token.toString());
         await LocalStorage.storeUserData(user: _currentUser!);
+        notifyListeners();
+      } else {
+        print(response.statusCode.toString());
+        print(response.body);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future updateProfile({required User userData}) async {
+    final result = await Future.wait([
+      LocalStorage.getUserData(),
+      LocalStorage.getToken(),
+    ]);
+    User? user = result[0] as User?;
+    String? token = result[1] as String?;
+    try {
+      http.Response response = await http.post(
+          Uri.parse(
+            "$_baseUrl/update-profile",
+          ),
+          headers: {
+            "Accept": "application/json",
+            "Authorization": "Bearer $token"
+          },
+          body: userData.toUpdateProfile());
+
+      if (response.statusCode == 200) {
+        var output = jsonDecode(response.body);
+        log(response.body);
+
+        // _currentUser = User.fromAuthJson(output['data']);
+        // await LocalStorage.storeUserData(user: _currentUser!);
         notifyListeners();
       } else {
         print(response.statusCode.toString());

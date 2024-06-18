@@ -1,5 +1,3 @@
-import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
-
 class User{
 
 
@@ -67,6 +65,14 @@ class User{
       "district_id": district_id,
       "other_candidate_details": other_candidate_details,
       "password": password
+    };
+  }
+  Map toUpdateProfile(){
+    return {
+      "full_name": full_name,
+      "email": email,
+      "phone": phone,
+      "position_id": position_id
     };
   }
 

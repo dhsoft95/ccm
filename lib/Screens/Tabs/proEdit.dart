@@ -2,9 +2,11 @@ import 'package:ccm/Providers/authProvider.dart';
 import 'package:ccm/Providers/supporterProvider.dart';
 import 'package:ccm/Resources/formats.dart';
 import 'package:ccm/Screens/Auth/login.dart';
+import 'package:ccm/Screens/Tabs/editProfile.dart';
 import 'package:ccm/Services/storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:iconly/iconly.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -18,12 +20,17 @@ class ProfileScreen extends StatelessWidget {
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: const Icon(CupertinoIcons.chevron_back,color: Colors.white,),
+              icon: const Icon(CupertinoIcons.chevron_back,color: Colors.white,size: 28,),
               onPressed: () { Navigator.pop(context); },
               tooltip: MaterialLocalizations.of(context).backButtonTooltip,
             );
           },
         ),
+        actions: [
+          IconButton(onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (_)=>EditProfileData()));
+          }, icon: Icon(IconlyBold.edit))
+        ],
         title: const Text('User Profile',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 24),),
         centerTitle: true,
         backgroundColor: const Color(0xff009b65),
