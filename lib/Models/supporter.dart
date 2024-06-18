@@ -1,4 +1,5 @@
 class Supporter {
+  int? id;
   String? first_name;
   String? last_name;
   String? dob;
@@ -12,6 +13,7 @@ class Supporter {
   String? other_supporter_details;
 
   Supporter({
+    this.id,
     this.first_name,
     this.last_name,
     this.dob,
@@ -24,6 +26,8 @@ class Supporter {
     this.promised,
     this.other_supporter_details,
   });
+
+  get otherSupporterDetails => null;
 
   Map<String, dynamic> toJson() {
     return {
@@ -42,8 +46,10 @@ class Supporter {
 
   factory Supporter.fromJson(Map<String, dynamic> json) {
     return Supporter(
+      id: json['id'],
       first_name: json['first_name'],
       last_name: json['last_name'],
+      dob: json['dob'],
       gender: json['gender'],
       region_id: json['region_id'].toString(),
       village_id: json['village_id'].toString(),

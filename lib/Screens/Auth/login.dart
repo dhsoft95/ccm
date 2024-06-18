@@ -64,21 +64,13 @@ class _LoginPageState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Ccm Yetu',
-                  style: GoogleFonts.roboto(
+                  'CCM YETU',
+                  style: GoogleFonts.poppins(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
-                // Text(
-                //   'Ccm Yetu',
-                //   style: GoogleFonts.montserrat(
-                //     fontSize: 14,
-                //     fontWeight: FontWeight.bold,
-                //     color: Colors.white,
-                //   ),
-                // ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -186,21 +178,40 @@ class _LoginPageState extends State<LoginScreen> {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      InkWell(
-                        onTap: () {
-                          // Handle registration button logic here
+                      ElevatedButton(
+                        onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) =>
-                                  const RegistrationScreen()));
+                              const RegistrationScreen()));
                         },
-                        child: const Text(
-                          'Register',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                           Colors.yellow, // Background color
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                      )
+                        child: Container(
+                          width: 300,
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          alignment: Alignment.center,
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(Icons.login, color: Colors.green),
+                              SizedBox(width: 8),
+                              Text(
+                                'Register',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

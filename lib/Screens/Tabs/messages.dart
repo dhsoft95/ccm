@@ -7,9 +7,11 @@ import 'package:stylish_dialog/stylish_dialog.dart';
 import 'home.dart';
 class Messages extends StatefulWidget {
   const Messages({Key? key}) : super(key: key);
+
   @override
   _MessagesState createState() => _MessagesState();
 }
+
 class _MessagesState extends State<Messages> {
   late SupporterProvider supporterProvider;
   final TextEditingController textMessagesController = TextEditingController();
@@ -178,7 +180,7 @@ class _MessagesState extends State<Messages> {
     ).show();
   }
 
-  sendMessage() async {
+  void sendMessage() async {
     if (textMessagesController.text.isNotEmpty) {
       showDialog(
         context: context,
@@ -191,7 +193,7 @@ class _MessagesState extends State<Messages> {
               height: 100,
               width: 100,
               alignment: Alignment.center,
-              child: CircularProgressIndicator.adaptive(
+              child: const CircularProgressIndicator.adaptive(
                 backgroundColor: Colors.white,
               ),
             ),

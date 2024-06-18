@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class SubscriptionScreen extends StatelessWidget {
   final List<Package> packages = [
-    Package(smsCount: 100, price: 13990),
-    Package(smsCount: 500, price: 49900),
-    Package(smsCount: 1000, price: 79900),
+    Package(smsCount: 500, price: 12500),
+    Package(smsCount: 1000, price: 25000),
+    Package(smsCount: 1500, price: 37500),
+    Package(smsCount: 2000, price: 50000),
   ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
