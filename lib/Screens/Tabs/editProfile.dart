@@ -98,7 +98,8 @@ class _EditProfileDataState extends State<EditProfileData> {
                   height: 20,
                 ),
                 DropdownButtonFormField(
-                  style: TextStyle(color: Colors.white),
+                  dropdownColor: Colors.white,
+                  style: TextStyle(color: Colors.white,fontSize: 16),
                   decoration: InputDecoration(
                     iconColor: Colors.white,
                     suffixIconColor: Colors.white,
