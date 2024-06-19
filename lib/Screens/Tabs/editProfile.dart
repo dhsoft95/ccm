@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../Models/positions.dart';
 import '../../Providers/authProvider.dart';
 import '../../Providers/dataProvider.dart';
+import '../../Widgets/animated_dropdown/custom_dropdown.dart';
 
 class EditProfileData extends StatefulWidget {
   const EditProfileData({super.key});
@@ -40,8 +41,12 @@ class _EditProfileDataState extends State<EditProfileData> {
       if (storageProvider.user!.full_name != null) {
         _name = TextEditingController(text: storageProvider.user!.full_name);
       }
-      if(storageProvider.user!.position_name != null){
-        selectedPosition =Provider.of<DataProvider>(context,listen: false).positions.firstWhere((element) => element.name.toString().toLowerCase()==storageProvider.user!.position_name.toString().toLowerCase());
+      if (storageProvider.user!.position_name != null) {
+        selectedPosition = Provider.of<DataProvider>(context, listen: false)
+            .positions
+            .firstWhere((element) =>
+                element.name.toString().toLowerCase() ==
+                storageProvider.user!.position_name.toString().toLowerCase());
       }
     } catch (e) {
       print(e.toString());
@@ -85,9 +90,16 @@ class _EditProfileDataState extends State<EditProfileData> {
               color: Colors.white, fontWeight: FontWeight.w500, fontSize: 24),
         ),
       ),
-      body: SizedBox(
+      body: Container(
         height: double.maxFinite,
         width: double.maxFinite,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xff009b65), Color(0xff0d1018)],
+          ),
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Form(
@@ -97,49 +109,30 @@ class _EditProfileDataState extends State<EditProfileData> {
                 SizedBox(
                   height: 20,
                 ),
-                DropdownButtonFormField(
-                  dropdownColor: Colors.white,
-                  style: TextStyle(color: Colors.white,fontSize: 16),
-                  decoration: InputDecoration(
-                    iconColor: Colors.white,
-                    suffixIconColor: Colors.white,
-                    labelText: 'Nafasi',
-                    hintText: 'Chagua Nafasi Unayogombea',
-                    labelStyle: const TextStyle(color: Colors.white),
-                    hintStyle: const TextStyle(color: Colors.white),
-                    prefixIcon: const Icon(
-                      Icons.account_box_rounded,
-                      color: Colors.white,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
+                CustomDropdown(
+                    decoration: CustomDropdownDecoration(
+                      closedSuffixIcon: Icon(
+                        Icons.arrow_drop_down,
                         color: Colors.white,
                       ),
+                      hintStyle:
+                          const TextStyle(color: Colors.white, fontSize: 16),
+                      headerStyle: TextStyle(color: Colors.white, fontSize: 16),
+                      closedFillColor: Colors.transparent,
+                      closedBorder: Border.all(color: Colors.white),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  value: selectedPosition,
-                  onChanged: (newValue) {
-                    setState(() {
-                      selectedPosition = newValue!;
-                    });
-                  },
-                  items: _positions.map<DropdownMenuItem>((value) {
-                    return DropdownMenuItem(
-                      value: value,
-                      child: Text(
-                        value.name.toString(),
-                        style: const TextStyle(color: Colors.green),
-                      ),
-                    );
-                  }).toList(),
-                ),
+                    hintText: 'Chagua Nafasi',
+                    items: _positions
+                        .map((position) => position.name.toString())
+                        .toList(),
+                    initialItem: selectedPosition != null
+                        ? selectedPosition!.name.toString()
+                        : null,
+                    excludeSelected: false,
+                    onChanged: (value) {
+                      selectedPosition = _positions.firstWhere(
+                          (element) => element.name.toString() == value);
+                    }),
                 const SizedBox(height: 20),
                 TextFormField(
                   controller: _name,
@@ -291,14 +284,17 @@ class _EditProfileDataState extends State<EditProfileData> {
           phone: _phone.text,
           position_id: selectedPosition!.id,
         ));
-        if(authProvider.profileUpdated){
+        if (authProvider.profileUpdated) {
           await storageProvider.initialize();
           Navigator.pop(context);
           Navigator.pop(context);
-        }else{
+        } else {
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("Failed to update profile",style: TextStyle(fontSize: 16),),
+            content: Text(
+              "Failed to update profile",
+              style: TextStyle(fontSize: 16),
+            ),
             backgroundColor: Colors.red,
           ));
         }

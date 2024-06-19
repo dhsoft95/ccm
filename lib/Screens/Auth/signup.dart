@@ -9,6 +9,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 import '../../Models/User.dart';
 import '../../Models/locations.dart';
+import '../../Widgets/animated_dropdown/custom_dropdown.dart';
 import '../Tabs/home.dart';
 import 'login.dart';
 import 'otp.dart';
@@ -163,51 +164,38 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     child: Column(
                       children: <Widget>[
                         const SizedBox(height: 20),
-                        DropdownButtonFormField(
-                          style: const TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            labelText: 'Nafasi',
-                            hintText: 'Chagua Nafasi Unayogombea',
-                            labelStyle: const TextStyle(color: Colors.white),
-                            hintStyle: const TextStyle(color: Colors.white),
-                            prefixIcon: const Icon(
-                              Icons.account_box_rounded,
-                              color: Colors.white,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
+                        CustomDropdown(
+                            decoration: CustomDropdownDecoration(
+                              closedSuffixIcon: Icon(
+                                Icons.arrow_drop_down,
                                 color: Colors.white,
                               ),
+                              hintStyle: const TextStyle(
+                                  color: Colors.white, fontSize: 16),
+                              headerStyle:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                              closedFillColor: Colors.transparent,
+                              closedBorder: Border.all(color: Colors.white),
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          value: selectedPosition,
-                          onChanged: (newValue) {
-                            setState(() {
-                              selectedPosition = newValue!;
-                            });
-                          },
-                          items: _positions
-                              .map<DropdownMenuItem>((value) {
-                            return DropdownMenuItem(
-                              value: value,
-                              child: Text(
-                                value.name.toString(),
-                                style: const TextStyle(color: Colors.green),
-                              ),
-                            );
-                          }).toList(),
-                        ),
+                            hintText: 'Chagua Nafasi',
+                            items: _positions
+                                .map((position) => position.name.toString())
+                                .toList(),
+                            initialItem: selectedPosition != null
+                                ? selectedPosition!.name.toString()
+                                : null,
+                            excludeSelected: false,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedPosition = _positions.firstWhere(
+                                    (element) =>
+                                        element.name.toString() == value);
+                              });
+                            }),
                         const SizedBox(height: 20),
                         TextFormField(
                           controller: fullNameController,
-                          style:  const TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                           cursorColor: Colors.white,
                           decoration: InputDecoration(
                             labelText: 'Majina yako mawili',
@@ -233,13 +221,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         const SizedBox(height: 20),
                         TextFormField(
                           controller: emailController,
-                          style:  const TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                           cursorColor: Colors.white,
                           decoration: InputDecoration(
                             labelText: 'Email',
                             hintText: "Weka barua pepe yako",
                             labelStyle: const TextStyle(color: Colors.white),
-                            hintStyle:  TextStyle(color: Colors.white.withOpacity(0.7)),
+                            hintStyle:
+                                TextStyle(color: Colors.white.withOpacity(0.7)),
                             prefixIcon: const Icon(
                               Icons.person,
                               color: Colors.white,
@@ -261,7 +250,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         const SizedBox(height: 20),
                         TextFormField(
                           controller: phoneNumberController,
-                          style:  const TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                           cursorColor: Colors.white,
                           decoration: InputDecoration(
                             labelText: 'Namba ya simu ',
@@ -287,7 +276,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         const SizedBox(height: 20),
                         TextFormField(
                           controller: passwordController,
-                          style:  const TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                           cursorColor: Colors.white,
                           decoration: InputDecoration(
                             labelText: 'Password',
@@ -312,144 +301,101 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           obscureText: true,
                         ),
                         const SizedBox(height: 20),
-                        DropdownButtonFormField(iconEnabledColor: Colors.white,
-                          decoration: InputDecoration(
-                            labelText: 'Mkoa',
-                            hintText: "changua Mkoa",
-                            labelStyle: const TextStyle(color: Colors.white),
-                            hintStyle: const TextStyle(color: Colors.white),
-                            prefixIcon: const Icon(
-                              Icons.home,
-                              color: Colors.white,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
+                        CustomDropdown(
+                            decoration: CustomDropdownDecoration(
+                              closedSuffixIcon: Icon(
+                                Icons.arrow_drop_down,
                                 color: Colors.white,
                               ),
+                              hintStyle: const TextStyle(
+                                  color: Colors.white, fontSize: 16),
+                              headerStyle:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                              closedFillColor: Colors.transparent,
+                              closedBorder: Border.all(color: Colors.white),
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          style: const TextStyle(color: Colors.white),
-                          value: selectedRegion,
-                          onChanged: (newValue) {
-                            setState(() {
-                              selectedRegion = newValue!;
-                              selectedDistrict = null;
-                            });
-                          },
-                          items: _regions.map<DropdownMenuItem>((Region value) {
-                            return DropdownMenuItem(
-                              value: value,
-                              child: Text(
-                                value.name.toString(),
-                                style: const TextStyle(color: Colors.green),
-                              ),
-                            );
-                          }).toList(),
-                        ),
+                            hintText: 'Chagua Mkoa',
+                            items: _regions
+                                .map((region) => region.name.toString())
+                                .toList(),
+                            initialItem: selectedRegion != null
+                                ? selectedRegion!.name.toString()
+                                : null,
+                            excludeSelected: false,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedRegion = _regions.firstWhere((region) =>
+                                    region.name.toString() == value);
+                              });
+                            }),
                         const SizedBox(height: 20),
                         if (selectedRegion != null) ...[
-                          DropdownButtonFormField(
-                            iconEnabledColor: Colors.white,
-                            decoration: InputDecoration(
-                              labelText: 'Jimbo',
-                              hintText: 'Changua Jimbo',
-                              labelStyle: const TextStyle(color: Colors.white),
-                              hintStyle: const TextStyle(color: Colors.white),
-                              prefixIcon: const Icon(
-                                IconlyLight.location,
-                                color: Colors.white,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
+                          CustomDropdown(
+                              decoration: CustomDropdownDecoration(
+                                closedSuffixIcon: Icon(
+                                  Icons.arrow_drop_down,
                                   color: Colors.white,
                                 ),
+                                hintStyle: const TextStyle(
+                                    color: Colors.white, fontSize: 16),
+                                headerStyle: TextStyle(
+                                    color: Colors.white, fontSize: 16),
+                                closedFillColor: Colors.transparent,
+                                closedBorder: Border.all(color: Colors.white),
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            style: const TextStyle(color: Colors.white),
-                            value: selectedDistrict,
-                            onChanged: (newValue) {
-                              setState(() {
-                                selectedDistrict = newValue!;
-                              });
-                            },
-                            items: selectedRegion?.districts!
-                                .map<DropdownMenuItem>((value) {
-                              return DropdownMenuItem(
-                                value: value,
-                                child: Text(
-                                  value.name.toString(),
-                                  style: const TextStyle(color: Colors.green),
-                                ),
-                              );
-                            }).toList(),
-                          ),
+                              hintText: 'Chagua Jimbo',
+                              items: selectedRegion!.districts!
+                                  .map((region) => region.name.toString())
+                                  .toList(),
+                              initialItem: selectedDistrict != null
+                                  ? selectedDistrict!.name.toString()
+                                  : null,
+                              excludeSelected: false,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedDistrict = selectedRegion!.districts!
+                                      .firstWhere((district) =>
+                                          district.name.toString() == value);
+                                });
+                              }),
                           const SizedBox(height: 20),
                         ],
                         if (selectedDistrict != null) ...[
-                          DropdownButtonFormField(
-                            iconEnabledColor: Colors.white,
-                            decoration: InputDecoration(
-                              labelText: 'Kata',
-                              hintText: 'Chagua Kata ',
-                              labelStyle: const TextStyle(color: Colors.white),
-                              hintStyle: const TextStyle(color: Colors.white),
-                              prefixIcon: const Icon(
-                                Icons.add_chart_sharp,
-                                color: Colors.white,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
+                          CustomDropdown(
+                              decoration: CustomDropdownDecoration(
+                                closedSuffixIcon: Icon(
+                                  Icons.arrow_drop_down,
                                   color: Colors.white,
                                 ),
+                                hintStyle: const TextStyle(
+                                    color: Colors.white, fontSize: 16),
+                                headerStyle: TextStyle(
+                                    color: Colors.white, fontSize: 16),
+                                closedFillColor: Colors.transparent,
+                                closedBorder: Border.all(color: Colors.white),
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            style: const TextStyle(color: Colors.white),
-                            value: selectedWard,
-                            onChanged: (newValue) {
-                              setState(() {
-                                selectedWard = newValue!;
-                              });
-                            },
-                            items: selectedDistrict?.wards!
-                                .map<DropdownMenuItem>((value) {
-                              return DropdownMenuItem(
-                                value: value,
-                                child: Text(
-                                  value.name.toString(),
-                                  style: const TextStyle(color: Colors.green),
-                                ),
-                              );
-                            }).toList(),
-                          ),
+                              hintText: 'Chagua Kata',
+                              items: selectedDistrict!.wards!
+                                  .map((region) => region.name.toString())
+                                  .toList(),
+                              initialItem: selectedWard != null
+                                  ? selectedWard!.name.toString()
+                                  : null,
+                              excludeSelected: false,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedWard = selectedDistrict!.wards!
+                                      .firstWhere((ward) =>
+                                          ward.name.toString() == value);
+                                });
+                              }),
                           const SizedBox(height: 20),
                         ],
-
                         if (selectedDistrict != null &&
                             selectedWard != null) ...[
                           TextFormField(
                             controller: _mtaa,
-                            style:  const TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.white),
                             cursorColor: Colors.white,
                             decoration: InputDecoration(
                               labelText: 'Mtaa/Kijiji',
@@ -460,7 +406,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                   color: Colors.white,
                                 ),
                               ),
-                              prefixIcon: Icon(IconlyLight.home, color: Colors.white),
+                              prefixIcon:
+                                  Icon(IconlyLight.home, color: Colors.white),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide: const BorderSide(
@@ -471,7 +418,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           ),
                           const SizedBox(height: 20),
                         ],
-
                         TextFormField(
                           controller: detailsController,
                           cursorColor: Colors.white,
@@ -481,7 +427,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             hintText:
                                 "Enter interesting details about yourself (optional)",
                             labelStyle: const TextStyle(color: Colors.white),
-                            hintStyle:  TextStyle(color: Colors.white.withOpacity(0.8)),
+                            hintStyle:
+                                TextStyle(color: Colors.white.withOpacity(0.8)),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: const BorderSide(

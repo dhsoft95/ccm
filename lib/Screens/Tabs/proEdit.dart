@@ -2,12 +2,11 @@ import 'package:ccm/Providers/authProvider.dart';
 import 'package:ccm/Providers/supporterProvider.dart';
 import 'package:ccm/Resources/formats.dart';
 import 'package:ccm/Screens/Auth/login.dart';
+import 'package:ccm/Screens/Tabs/editProfile.dart';
 import 'package:ccm/Services/storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'edit.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -17,7 +16,8 @@ class ProfileScreen extends StatelessWidget {
     final authProvider = Provider.of<AuthProvider>(context);
     final storageProvider = Provider.of<LocalStorageProvider>(context);
 
-    String initials = storageProvider.user!.full_name.toString().extractInitials();
+    String initials =
+        storageProvider.user!.full_name.toString().extractInitials();
 
     return Scaffold(
       appBar: AppBar(
@@ -131,45 +131,15 @@ class ProfileScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () async {
-                  await LocalStorage.logout();
-                  Provider.of<SupporterProvider>(context, listen: false).supporters = [];
-                  Provider.of<SupporterProvider>(context, listen: false).supporterAdded = false;
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (_) => LoginScreen()),
-                        (route) => false,
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: const Color(0xff009b65),
-                  backgroundColor: Colors.white,
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Text(
-                    'Logout',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xff009b65),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => EditProfileScreen()));
+                      MaterialPageRoute(builder: (_) => EditProfileData()));
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor:  Colors.red,
+                  backgroundColor: Colors.red,
+                  minimumSize:
+                      Size(MediaQuery.of(context).size.width * 0.85, 55),
                   elevation: 5,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
@@ -183,6 +153,42 @@ class ProfileScreen extends StatelessWidget {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () async {
+                  await LocalStorage.logout();
+                  Provider.of<SupporterProvider>(context, listen: false)
+                      .supporters = [];
+                  Provider.of<SupporterProvider>(context, listen: false)
+                      .supporterAdded = false;
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (_) => LoginScreen()),
+                    (route) => false,
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: const Color(0xff009b65),
+                  backgroundColor: Colors.white,
+                  minimumSize:
+                      Size(MediaQuery.of(context).size.width * 0.85, 55),
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Text(
+                    'Logout',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff009b65),
                     ),
                   ),
                 ),
