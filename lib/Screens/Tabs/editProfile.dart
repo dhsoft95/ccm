@@ -110,29 +110,36 @@ class _EditProfileDataState extends State<EditProfileData> {
                   height: 20,
                 ),
                 CustomDropdown(
-                    decoration: CustomDropdownDecoration(
-                      closedSuffixIcon: Icon(
-                        Icons.arrow_drop_down,
-                        color: Colors.white,
-                      ),
-                      hintStyle:
-                          const TextStyle(color: Colors.white, fontSize: 16),
-                      headerStyle: TextStyle(color: Colors.white, fontSize: 16),
-                      closedFillColor: Colors.transparent,
-                      closedBorder: Border.all(color: Colors.white),
+                  decoration: CustomDropdownDecoration(
+                    closedSuffixIcon: Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.white,
                     ),
-                    hintText: 'Chagua Nafasi',
-                    items: _positions
-                        .map((position) => position.name.toString())
-                        .toList(),
-                    initialItem: selectedPosition != null
-                        ? selectedPosition!.name.toString()
-                        : null,
-                    excludeSelected: false,
-                    onChanged: (value) {
-                      selectedPosition = _positions.firstWhere(
-                          (element) => element.name.toString() == value);
-                    }),
+                    hintStyle:
+                        const TextStyle(color: Colors.white, fontSize: 16),
+                    headerStyle: TextStyle(color: Colors.white, fontSize: 16),
+                    closedFillColor: Colors.transparent,
+                    closedBorder: Border.all(color: Colors.white),
+                  ),
+                  hintText: 'Chagua Nafasi',
+                  items: _positions
+                      .map((position) => position.name.toString())
+                      .toList(),
+                  initialItem: selectedPosition != null
+                      ? selectedPosition!.name.toString()
+                      : null,
+                  excludeSelected: false,
+                  onChanged: (value) {
+                    selectedPosition = _positions.firstWhere(
+                        (element) => element.name.toString() == value);
+                  },
+                  validator: (value) {
+                    if (value == null) {
+                      return "Chagua kimoja";
+                    }
+                    return null;
+                  },
+                ),
                 const SizedBox(height: 20),
                 TextFormField(
                   controller: _name,

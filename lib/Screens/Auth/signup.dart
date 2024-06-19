@@ -211,7 +211,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               setState(() {
                                 selectedPosition = value;
                               });
-                            }),
+                            },
+                          validator: (value) {
+                            if (value == null) {
+                              return "Chagua kimoja";
+                            }
+                            return null;
+                          },
+                        ),
                         const SizedBox(height: 20),
                         TextFormField(
                           controller: fullNameController,
@@ -343,7 +350,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               setState(() {
                                 selectedRegion = value;
                               });
-                            }),
+                            },
+                          validator: (value) {
+                            if (value == null) {
+                              return "Chagua kimoja";
+                            }
+                            return null;
+                          },
+                        ),
                         const SizedBox(height: 20),
                         if (selectedRegion != null) ...[
                           CustomDropdown<District>.searchRequest(
@@ -369,6 +383,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               });
                             },
                             futureRequest: _districtList,
+                            validator: (value) {
+                              if (value == null) {
+                                return "Chagua kimoja";
+                              }
+                              return null;
+                            },
                           ),
                           const SizedBox(height: 20),
                         ],
@@ -396,6 +416,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               });
                             },
                             futureRequest: _wardList,
+                            validator: (value) {
+                              if (value == null) {
+                                return "Chagua kimoja";
+                              }
+                              return null;
+                            },
                           ),
                           const SizedBox(height: 20),
                         ],
