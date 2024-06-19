@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'Providers/supporterProvider.dart';
-import 'Screens/Auth/login.dart'; // Import your login screen
+import 'Screens/Auth/login.dart';
 
 final dataProvider = DataProvider();
 final supporters = SupporterProvider();

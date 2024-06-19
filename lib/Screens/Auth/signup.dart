@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:ccm/Models/positions.dart';
 import 'package:ccm/Providers/authProvider.dart';
 import 'package:ccm/Providers/dataProvider.dart';
@@ -60,6 +62,30 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Region? selectedRegion;
   Ward? selectedWard;
   Positions? selectedPosition;
+
+  Future<List<Region>> _regionsList(String query) async {
+    return await Future.delayed(const Duration(seconds: 1), () {
+      return _regions.where((e) {
+        return e.name.toString().toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    });
+  }
+
+  Future<List<District>> _districtList(String query) async {
+    return await Future.delayed(const Duration(seconds: 1), () {
+      return selectedRegion!.districts!.where((e) {
+        return e.name.toString().toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    });
+  }
+
+  Future<List<Ward>> _wardList(String query) async {
+    return await Future.delayed(const Duration(seconds: 1), () {
+      return selectedDistrict!.wards!.where((e) {
+        return e.name.toString().toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    });
+  }
 
   @override
   void didChangeDependencies() {
@@ -164,7 +190,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     child: Column(
                       children: <Widget>[
                         const SizedBox(height: 20),
-                        CustomDropdown(
+                        CustomDropdown<Positions>(
                             decoration: CustomDropdownDecoration(
                               closedSuffixIcon: Icon(
                                 Icons.arrow_drop_down,
@@ -178,18 +204,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               closedBorder: Border.all(color: Colors.white),
                             ),
                             hintText: 'Chagua Nafasi',
-                            items: _positions
-                                .map((position) => position.name.toString())
-                                .toList(),
-                            initialItem: selectedPosition != null
-                                ? selectedPosition!.name.toString()
-                                : null,
+                            items: _positions,
+                            initialItem: selectedPosition,
                             excludeSelected: false,
                             onChanged: (value) {
                               setState(() {
-                                selectedPosition = _positions.firstWhere(
-                                    (element) =>
-                                        element.name.toString() == value);
+                                selectedPosition = value;
                               });
                             }),
                         const SizedBox(height: 20),
@@ -301,7 +321,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           obscureText: true,
                         ),
                         const SizedBox(height: 20),
-                        CustomDropdown(
+                        CustomDropdown<Region>.searchRequest(
+                            futureRequest: _regionsList,
                             decoration: CustomDropdownDecoration(
                               closedSuffixIcon: Icon(
                                 Icons.arrow_drop_down,
@@ -315,80 +336,67 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               closedBorder: Border.all(color: Colors.white),
                             ),
                             hintText: 'Chagua Mkoa',
-                            items: _regions
-                                .map((region) => region.name.toString())
-                                .toList(),
-                            initialItem: selectedRegion != null
-                                ? selectedRegion!.name.toString()
-                                : null,
                             excludeSelected: false,
+                            initialItem: selectedRegion,
+                            items: _regions,
                             onChanged: (value) {
                               setState(() {
-                                selectedRegion = _regions.firstWhere((region) =>
-                                    region.name.toString() == value);
+                                selectedRegion = value;
                               });
                             }),
                         const SizedBox(height: 20),
                         if (selectedRegion != null) ...[
-                          CustomDropdown(
-                              decoration: CustomDropdownDecoration(
-                                closedSuffixIcon: Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.white,
-                                ),
-                                hintStyle: const TextStyle(
-                                    color: Colors.white, fontSize: 16),
-                                headerStyle: TextStyle(
-                                    color: Colors.white, fontSize: 16),
-                                closedFillColor: Colors.transparent,
-                                closedBorder: Border.all(color: Colors.white),
+                          CustomDropdown<District>.searchRequest(
+                            decoration: CustomDropdownDecoration(
+                              closedSuffixIcon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.white,
                               ),
-                              hintText: 'Chagua Jimbo',
-                              items: selectedRegion!.districts!
-                                  .map((region) => region.name.toString())
-                                  .toList(),
-                              initialItem: selectedDistrict != null
-                                  ? selectedDistrict!.name.toString()
-                                  : null,
-                              excludeSelected: false,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedDistrict = selectedRegion!.districts!
-                                      .firstWhere((district) =>
-                                          district.name.toString() == value);
-                                });
-                              }),
+                              hintStyle: const TextStyle(
+                                  color: Colors.white, fontSize: 16),
+                              headerStyle:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                              closedFillColor: Colors.transparent,
+                              closedBorder: Border.all(color: Colors.white),
+                            ),
+                            hintText: 'Chagua Jimbo',
+                            items: selectedRegion!.districts!,
+                            initialItem: selectedDistrict,
+                            excludeSelected: false,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedDistrict = value;
+                              });
+                            },
+                            futureRequest: _districtList,
+                          ),
                           const SizedBox(height: 20),
                         ],
                         if (selectedDistrict != null) ...[
-                          CustomDropdown(
-                              decoration: CustomDropdownDecoration(
-                                closedSuffixIcon: Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.white,
-                                ),
-                                hintStyle: const TextStyle(
-                                    color: Colors.white, fontSize: 16),
-                                headerStyle: TextStyle(
-                                    color: Colors.white, fontSize: 16),
-                                closedFillColor: Colors.transparent,
-                                closedBorder: Border.all(color: Colors.white),
+                          CustomDropdown<Ward>.searchRequest(
+                            decoration: CustomDropdownDecoration(
+                              closedSuffixIcon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.white,
                               ),
-                              hintText: 'Chagua Kata',
-                              items: selectedDistrict!.wards!
-                                  .map((region) => region.name.toString())
-                                  .toList(),
-                              initialItem: selectedWard != null
-                                  ? selectedWard!.name.toString()
-                                  : null,
-                              excludeSelected: false,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedWard = selectedDistrict!.wards!
-                                      .firstWhere((ward) =>
-                                          ward.name.toString() == value);
-                                });
-                              }),
+                              hintStyle: const TextStyle(
+                                  color: Colors.white, fontSize: 16),
+                              headerStyle:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                              closedFillColor: Colors.transparent,
+                              closedBorder: Border.all(color: Colors.white),
+                            ),
+                            hintText: 'Chagua Kata',
+                            items: selectedDistrict!.wards!,
+                            initialItem: selectedWard,
+                            excludeSelected: false,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedWard = value;
+                              });
+                            },
+                            futureRequest: _wardList,
+                          ),
                           const SizedBox(height: 20),
                         ],
                         if (selectedDistrict != null &&

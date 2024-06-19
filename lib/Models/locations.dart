@@ -5,6 +5,10 @@ class Region {
   List<District>? districts;
 
   Region({this.id, this.name, this.other_region_details, this.districts});
+  @override
+  String toString() {
+    return name!;
+  }
 
   Map toJson() {
     return {
@@ -42,6 +46,10 @@ class District {
       this.other_district_details,
       this.villages,
       this.wards});
+  @override
+  String toString() {
+    return name!;
+  }
 
   Map toJson() {
     return {
@@ -67,6 +75,8 @@ class District {
             .map((villageItem) => Village.fromJson(villageItem))
             .toList());
   }
+
+
 }
 
 class Village {
@@ -82,6 +92,10 @@ class Village {
       this.district_id,
       this.name,
       this.other_villages_details});
+  @override
+  String toString() {
+    return name!;
+  }
 
   Map toJson() {
     return {
@@ -102,6 +116,7 @@ class Village {
       other_villages_details: json['other_villages_details'],
     );
   }
+
 }
 
 class Ward {
@@ -119,6 +134,10 @@ class Ward {
       this.village_id,
       this.name,
       this.other_villages_details});
+  @override
+  String toString() {
+    return name!;
+  }
 
   Map toJson() {
     return {

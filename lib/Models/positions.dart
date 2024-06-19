@@ -7,6 +7,11 @@ class Positions {
   Positions(
       {this.id, this.name, this.description, this.other_position_details});
 
+  @override
+  String toString() {
+    return name!;
+  }
+
   Map toJson() {
     return {
       "id": id,
