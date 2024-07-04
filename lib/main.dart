@@ -17,7 +17,7 @@ Widget? _landingPage;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  await Future.wait([
+   Future.wait([
     dataProvider.getRegionData(),
     dataProvider.getPositionsData(),
     localProvider.initialize(),

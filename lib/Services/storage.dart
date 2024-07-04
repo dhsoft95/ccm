@@ -26,7 +26,12 @@ class LocalStorage {
   }
 
   static Future<String?> getToken() async {
-    var token = await _storage.read(key: 'token');
+    var token = null;
+    try{
+       token = await _storage.read(key: 'token');
+    }catch(e){
+       token = null;
+    }
     return token;
   }
 
@@ -47,7 +52,13 @@ class LocalStorage {
   }
 
   static Future<bool> checkSession() async {
-    var available = await _storage.containsKey(key: 'token');
+    bool available = false;
+    try{
+      available = await _storage.containsKey(key: 'token');
+    }catch(e){
+      available= false;
+    }
+
     return available;
   }
 
@@ -56,11 +67,16 @@ class LocalStorage {
   }
 
   static Future<bool> getOnboarding() async {
-    var onboarding = await _storage.read(key: 'onboarding') != null
-        ? await _storage.read(key: 'onboarding') == 'true'
-            ? true
-            : false
-        : false;
+    bool onboarding = false;
+try{
+   onboarding = await _storage.read(key: 'onboarding') != null
+      ? await _storage.read(key: 'onboarding') == 'true'
+      ? true
+      : false
+      : false;
+}catch(e){
+   onboarding =false;
+}
     return onboarding;
   }
 }
