@@ -23,10 +23,12 @@ void main() async {
     localProvider.initialize(),
   ]);
   if (await LocalStorage.checkSession()) {
-    await Future.wait([
-      supporters.getMessages(),
-      supporters.getMessagesCount(),
-    ]);
+ try{
+   await Future.wait([
+     supporters.getMessages(),
+     supporters.getMessagesCount(),
+   ]);
+ }catch(e,stackTrace){}
     _landingPage = DashboardScreen();
   } else {
     _landingPage = LoginScreen();
@@ -54,7 +56,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false, // Set the dark theme
       // Use themeMode to adopt from the system's theme
       themeMode: ThemeMode.system,
-
       home: _landingPage, // Removed the extra "home:" and the extra ","
     );
   }

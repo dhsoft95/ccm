@@ -34,8 +34,13 @@ class DataProvider extends ChangeNotifier {
 
         _regions = temp.map((region) => Region.fromJson(region)).toList();
         notifyListeners();
+      }else{
+        _regions=[];
+        notifyListeners();
       }
     } catch (e) {
+      _regions=[];
+      notifyListeners();
       print(e.toString());
     }
   }
@@ -55,8 +60,13 @@ class DataProvider extends ChangeNotifier {
         _positions =
             temp.map((position) => Positions.fromJson(position)).toList();
         notifyListeners();
+      }else{
+        _positions=[];
+        notifyListeners();
       }
     } catch (e) {
+      _positions=[];
+      notifyListeners();
       print(e.toString());
     }
   }

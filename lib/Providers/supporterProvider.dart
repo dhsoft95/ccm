@@ -195,11 +195,14 @@ class SupporterProvider with ChangeNotifier {
         _messages = temp.map((message) => Messages.fromJson(message)).toList();
         dev.log('Parsed ${_messages.length} messages');
         notifyListeners();
-      } else {
+      } else {_messages=[];
+        notifyListeners();
         dev.log('Error response received');
         throw Exception('Failed to fetch messages');
       }
     } catch (e, stackTrace) {
+      _messages=[];
+      notifyListeners();
       dev.log('Error in getMessages: $e');
       dev.log('Stack trace: $stackTrace');
       rethrow;
