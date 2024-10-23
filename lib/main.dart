@@ -29,9 +29,9 @@ void main() async {
      supporters.getMessagesCount(),
    ]);
  }catch(e,stackTrace){}
-    _landingPage = DashboardScreen();
+    _landingPage = const DashboardScreen();
   } else {
-    _landingPage = LoginScreen();
+    _landingPage = const LoginScreen();
   }
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => AuthProvider()),
