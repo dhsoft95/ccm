@@ -1,5 +1,8 @@
+import 'package:ccm/Models/supporter.dart';
+import 'package:ccm/Providers/supporterProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:provider/provider.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:phone_number/phone_number.dart';
@@ -44,6 +47,7 @@ class _AddSupporterState extends State<AddSupporter> {
   // Constants
   static const _backgroundColor = Color(0xff009b65);
   static const _gradientColors = [Color(0xff009b65), Color(0xff0d1018)];
+  late SupporterProvider _supporterProvider;
 
   // Controllers
   final _formKey = GlobalKey<FormState>();
@@ -58,6 +62,12 @@ class _AddSupporterState extends State<AddSupporter> {
   String _promised = '';
   bool _isLoading = false;
   bool _hasFormError = false;
+
+  @override
+  void didChangeDependencies() {
+   _supporterProvider = Provider.of<SupporterProvider>(context);
+    super.didChangeDependencies();
+  }
 
   @override
   void dispose() {
@@ -501,11 +511,22 @@ class _AddSupporterState extends State<AddSupporter> {
         return;
       }
 
-      // TODO: Replace with your actual API call
-      await Future.delayed(const Duration(seconds: 2)); // Simulating API call
+String message = await _supporterProvider.addSupporter(supporter: Supporter(
+  first_name: _firstNameController.text.trim(),
+  last_name: _lastNameController.text.trim(),
+  phone_number: _phoneNumberController.text.trim(),
+  gender: _selectedGender,
+  promised: _promised == 'Yes' ? 1 : 0,
+  other_supporter_details: _detailsController.text.trim(),
+));
 
-      // Handle success
-      _showSuccessDialog();
+      if(_supporterProvider.supporterAdded){
+        // Handle success
+        _showSuccessDialog();
+      }else{
+        _showErrorDialog(message);
+      }
+
     } catch (e) {
       _showErrorDialog('Failed to add supporter: ${e.toString()}');
     } finally {
@@ -535,7 +556,7 @@ class _AddSupporterState extends State<AddSupporter> {
     try {
       final cleanNumber = phoneNumber.replaceAll(RegExp(r'\D'), '');
       // You might want to replace 'US' with the appropriate country code
-      return await _phoneNumberUtil.validate(cleanNumber, regionCode: 'US');
+      return await _phoneNumberUtil.validate(cleanNumber, regionCode: 'TZ');
     } catch (e) {
       print('Phone number validation error: $e');
       return false;
