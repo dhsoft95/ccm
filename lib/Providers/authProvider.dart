@@ -1,154 +1,230 @@
 import 'dart:convert';
 import 'dart:developer';
-
-import 'package:ccm/Services/storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 import '../Models/User.dart';
+import '../Services/storage.dart';
 
 class AuthProvider extends ChangeNotifier {
-  final _baseUrl = dotenv.env['API_URL'];
+  final String? _baseUrl = dotenv.env['API_URL'];
 
   User? _registerUser;
   String? _otpVerifier;
-  String? get otpVerifier => _otpVerifier;
+  User? _currentUser;
+  bool _profileUpdated = false;
+  bool _otpSent = false;
 
+  // Getters
+  String? get otpVerifier => _otpVerifier;
+  User? get registerUser => _registerUser;
+  User? get currentUser => _currentUser;
+  bool get profileUpdated => _profileUpdated;
+  bool get otpSent => _otpSent;
+
+  // Setters
   set registerUser(User? value) {
     _registerUser = value;
+    notifyListeners();
   }
-
-  User? get registerUser => _registerUser;
-
-  User? _currentUser;
-
-  User? get currentUser => _currentUser;
-
-  bool _profileUpdated = false;
-
-  bool get profileUpdated => _profileUpdated;
 
   set profileUpdated(bool value) {
     _profileUpdated = value;
+    notifyListeners();
   }
 
-  bool _otpSent = false;
-  bool get otpSent => _otpSent;
-
+  // Login Function
   Future<String?> login({required User user}) async {
     try {
-      http.Response response =
-          await http.post(Uri.parse("$_baseUrl/login"), body: user.toLogin());
+      final response = await http.post(
+        Uri.parse("$_baseUrl/login"),
+        body: user.toLogin(),
+      );
 
-      if (response.statusCode == 200) {
-        var output = jsonDecode(response.body);
+      final responseData = jsonDecode(response.body);
 
-        _currentUser = User.fromAuthJson(output['data']);
-        await LocalStorage.storeToken(token: _currentUser!.token.toString());
-        await LocalStorage.storeUserData(user: _currentUser!);
-        notifyListeners();
-        return null; // No error, login successful
-      } else {
-        // Handle different HTTP error status codes
-        if (response.statusCode == 401) {
-          // Unauthorized: Invalid credentials
+      switch (response.statusCode) {
+        case 200:
+          _currentUser = User.fromAuthJson(responseData['data']);
+          await _storeUserData();
+          notifyListeners();
+          return null;
+        case 401:
           return "Invalid email or password.";
-        } else {
-          // Other errors
-          return "Login failed with status code ${response.statusCode}";
-        }
+        default:
+          return "Login failed: ${responseData['message'] ?? 'Unknown error'}";
       }
     } catch (e) {
-      print("Error during login: $e");
-      return "An error occurred during login.";
+      debugPrint("Login error: $e");
+      return "Connection error. Please check your internet connection.";
     }
   }
 
-  Future register() async {
+  // Registration Function
+  Future<Map<String, dynamic>> register() async {
     try {
-      http.Response response = await http.post(Uri.parse("$_baseUrl/register"),
-          body: _registerUser!.toRegistration());
+      if (_registerUser == null) {
+        return {'success': false, 'message': 'Registration data is missing'};
+      }
+
+      final response = await http.post(
+        Uri.parse("$_baseUrl/register"),
+        body: _registerUser!.toRegistration(),
+      );
+
+      final responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        var output = jsonDecode(response.body);
-        print(output.toString());
-
-        _currentUser = User.fromAuthJson(output['data']);
-        await LocalStorage.storeToken(token: _currentUser!.token.toString());
-        await LocalStorage.storeUserData(user: _currentUser!);
+        _currentUser = User.fromAuthJson(responseData['data']);
+        await _storeUserData();
         notifyListeners();
+        return {'success': true, 'message': 'Registration successful'};
       } else {
-        print(response.statusCode.toString());
-        print(response.body);
+        debugPrint('Registration failed: ${response.body}');
+        return {'success': false, 'message': responseData['message'] ?? 'Registration failed'};
       }
     } catch (e) {
-      print(e.toString());
+      debugPrint('Registration error: $e');
+      return {'success': false, 'message': 'Connection error. Please try again.'};
     }
   }
 
-  Future updateProfile({required User userData}) async {
-    final result = await Future.wait([
-      LocalStorage.getUserData(),
-      LocalStorage.getToken(),
-    ]);
-    User? user = result[0] as User?;
-    String? token = result[1] as String?;
+  // Profile Update Function
+  Future<Map<String, dynamic>> updateProfile({required User userData}) async {
     try {
-      http.Response response = await http.put(
-          Uri.parse(
-            "$_baseUrl/candidate-update",
-          ),
-          headers: {
-            "Accept": "application/json",
-            "Authorization": "Bearer $token"
-          },
-          body: userData.toUpdateProfile());
+      final result = await Future.wait([
+        LocalStorage.getUserData(),
+        LocalStorage.getToken(),
+      ]);
+
+      final String? token = result[1] as String?;
+
+      if (token == null) {
+        return {'success': false, 'message': 'Authentication token missing'};
+      }
+
+      final response = await http.put(
+        Uri.parse("$_baseUrl/candidate-update"),
+        headers: {
+          "Accept": "application/json",
+          "Authorization": "Bearer $token"
+        },
+        body: userData.toUpdateProfile(),
+      );
+
+      final responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        var output = jsonDecode(response.body);
-
-        _currentUser = User.fromAuthJson(output['data']);
+        _currentUser = User.fromAuthJson(responseData['data']);
         await LocalStorage.storeUserData(user: _currentUser!);
         _profileUpdated = true;
         notifyListeners();
+        return {'success': true, 'message': 'Profile updated successfully'};
       } else {
-        if (kDebugMode) {
-          print(response.statusCode.toString());
-          print(response.body);
-        }
-
         _profileUpdated = false;
         notifyListeners();
+        return {'success': false, 'message': responseData['message'] ?? 'Profile update failed'};
       }
     } catch (e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
+      debugPrint('Profile update error: $e');
       _profileUpdated = false;
       notifyListeners();
+      return {'success': false, 'message': 'Connection error. Please try again.'};
     }
   }
 
-  Future sendOtp({required String phone}) async {
+  // Send OTP Function
+  Future<Map<String, dynamic>> sendOtp({required String phone}) async {
     try {
-      http.Response response = await http.post(Uri.parse("$_baseUrl/sendOtp"),
-          body: {"phone": phone.split('+')[1]});
+      if (phone.isEmpty) {
+        return {'success': false, 'message': 'Phone number is required'};
+      }
+
+      final formattedPhone = phone.startsWith('+') ? phone.substring(1) : phone;
+
+      final response = await http.post(
+        Uri.parse("$_baseUrl/send-otp"),
+        body: {"phone": formattedPhone},
+      );
+
+      final responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        var output = jsonDecode(response.body);
-        _otpVerifier = output['\ otp'].toString();
+        _otpVerifier = responseData['otp']?.toString();
         _otpSent = true;
         notifyListeners();
-        log(output.toString());
+        log('OTP Response: $responseData');
+        return {'success': true, 'message': 'OTP sent successfully'};
       } else {
         _otpSent = false;
         notifyListeners();
+        return {'success': false, 'message': responseData['message'] ?? 'Failed to send OTP'};
       }
     } catch (e) {
-      print(e.toString());
+      debugPrint('Send OTP error: $e');
       _otpSent = false;
       notifyListeners();
+      return {'success': false, 'message': 'Connection error. Please try again.'};
     }
+  }
+
+  // Verify OTP Function
+  Future<Map<String, dynamic>> verifyOtp({required String otp}) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$_baseUrl/verify-otp"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({'otp': otp}),
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        // OTP verification successful
+        notifyListeners();
+        return {
+          'success': true,
+          'message': responseData['message'] ?? 'OTP verification successful.'
+        };
+      } else if (response.statusCode == 401) {
+        // OTP expired or incorrect
+        return {
+          'success': false,
+          'message': responseData['message'] ?? 'Incorrect OTP or OTP expired.'
+        };
+      } else {
+        // Handle other errors
+        return {
+          'success': false,
+          'message': 'OTP verification failed. Please try again.'
+        };
+      }
+    } catch (e) {
+      debugPrint('OTP verification error: $e');
+      return {
+        'success': false,
+        'message': 'Connection error. Please try again.'
+      };
+    }
+  }
+
+
+  // Store User Data Function
+  Future<void> _storeUserData() async {
+    if (_currentUser != null) {
+      await LocalStorage.storeToken(token: _currentUser!.token.toString());
+      await LocalStorage.storeUserData(user: _currentUser!);
+    }
+  }
+
+  // Logout Function
+  void logout() {
+    _currentUser = null;
+    _registerUser = null;
+    _otpVerifier = null;
+    _otpSent = false;
+    _profileUpdated = false;
+    notifyListeners();
   }
 }

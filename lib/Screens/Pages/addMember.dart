@@ -1,655 +1,645 @@
-import 'package:ccm/Models/supporter.dart';
-import 'package:ccm/Providers/supporterProvider.dart';
-import 'package:contacts_service/contacts_service.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
-import 'package:iconly/iconly.dart';
-import 'package:material_symbols_icons/symbols.dart';
-import 'package:provider/provider.dart';
+import 'package:contacts_service/contacts_service.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
-import '../../Models/locations.dart';
-import '../../Providers/dataProvider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:phone_number/phone_number.dart';
 import '../Tabs/home.dart';
-import 'contacts.dart';
+
+// Model class for supporter data
+class SupporterData {
+  final String firstName;
+  final String lastName;
+  final String phoneNumber;
+  final String gender;
+  final String promised;
+  final String details;
+
+  SupporterData({
+    required this.firstName,
+    required this.lastName,
+    required this.phoneNumber,
+    required this.gender,
+    required this.promised,
+    required this.details,
+  });
+
+  Map<String, dynamic> toJson() => {
+    'firstName': firstName,
+    'lastName': lastName,
+    'phoneNumber': phoneNumber,
+    'gender': gender,
+    'promised': promised,
+    'details': details,
+  };
+}
 
 class AddSupporter extends StatefulWidget {
-  const AddSupporter({super.key});
+  const AddSupporter({Key? key}) : super(key: key);
 
   @override
   State<AddSupporter> createState() => _AddSupporterState();
 }
 
 class _AddSupporterState extends State<AddSupporter> {
-  late SupporterProvider supporterProvider;
-  late DataProvider dataProvider;
-  List<Region> _regions = [];
+  // Constants
+  static const _backgroundColor = Color(0xff009b65);
+  static const _gradientColors = [Color(0xff009b65), Color(0xff0d1018)];
 
-  final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController lastNameController = TextEditingController();
-  final TextEditingController phoneNumberController = TextEditingController();
-  final TextEditingController detailsController = TextEditingController();
-  final TextEditingController _mtaa = TextEditingController();
+  // Controllers
+  final _formKey = GlobalKey<FormState>();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _phoneNumberController = TextEditingController();
+  final _detailsController = TextEditingController();
+  final _phoneNumberUtil = PhoneNumberUtil();
 
-  District? selectedDistrict;
-  Village? selectedVillage;
-  Region? selectedRegion;
-  Ward? selectedWard;
-  String _selectedGender = "";
-  String promised = "";
+  // State variables
+  String _selectedGender = '';
+  String _promised = '';
+  bool _isLoading = false;
+  bool _hasFormError = false;
 
   @override
-  void didChangeDependencies() {
-    supporterProvider = Provider.of<SupporterProvider>(context);
-    dataProvider = Provider.of<DataProvider>(context);
-    _regions = dataProvider.regions;
-    super.didChangeDependencies();
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _phoneNumberController.dispose();
+    _detailsController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xff009b65), Color(0xff0d1018)],
-          ),
-        ),
-        child: CustomScrollView(
-          slivers: <Widget>[
-            SliverAppBar(
-              leading: Builder(
-                builder: (BuildContext context) {
-                  return IconButton(
-                    icon: const Icon(
-                      CupertinoIcons.chevron_back,
-                      size: 32,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    tooltip:
-                        MaterialLocalizations.of(context).backButtonTooltip,
-                  );
-                },
-              ),
-              pinned: true,
-              expandedHeight: screenHeight * 0.1,
-              flexibleSpace: FlexibleSpaceBar(
-                background: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Container(
-                    //   decoration: const BoxDecoration(
-                    //     shape: BoxShape.circle,
-                    //     color: Colors.white,
-                    //   ),
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.all(10.0),
-                    //     child: Image.asset(
-                    //       'assets/ccm_logo.png',
-                    //       width: 50,
-                    //       height: 50,
-                    //     ),
-                    //   ),
-                    // ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      'Add Member',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              backgroundColor: const Color(0xff009b65),
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: <Widget>[
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 8.0),
-                                child: TextFormField(
-                                  controller: firstNameController,
-                                  style: const TextStyle(color: Colors.white),
-                                  cursorColor: Colors.white,
-                                  decoration: InputDecoration(
-                                    labelText: 'First Name',
-                                    labelStyle:
-                                        const TextStyle(color: Colors.white),
-                                    prefixIcon: const Icon(
-                                      Icons.person,
-                                      color: Colors.white,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: TextFormField(
-                                  controller: lastNameController,
-                                  style: const TextStyle(color: Colors.white),
-                                  cursorColor: Colors.white,
-                                  decoration: InputDecoration(
-                                    labelText: 'Last Name',
-                                    labelStyle:
-                                        const TextStyle(color: Colors.white),
-                                    prefixIcon: const Icon(
-                                      Icons.person,
-                                      color: Colors.white,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Gender",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Row(
-                              children: [
-                                Row(
-                                  children: [
-                                    Radio<String>(
-                                      value: 'Male',
-                                      groupValue: _selectedGender,
-                                      onChanged: (value) => setState(
-                                          () => _selectedGender = value!),
-                                      activeColor: Colors.white,
-                                    ),
-                                    Text(
-                                      'Male',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Radio<String>(
-                                      value: 'Female',
-                                      groupValue: _selectedGender,
-                                      onChanged: (value) => setState(
-                                          () => _selectedGender = value!),
-                                      activeColor: Colors.white,
-                                    ),
-                                    Text(
-                                      'Female',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Promised",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Row(
-                              children: [
-                                Row(
-                                  children: [
-                                    Radio<String>(
-                                      value: "Yes",
-                                      groupValue: promised,
-                                      onChanged: (value) =>
-                                          setState(() => promised = value!),
-                                      activeColor: Colors.white,
-                                    ),
-                                    Text(
-                                      'Yes',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Radio<String>(
-                                      value: "No",
-                                      groupValue: promised,
-                                      onChanged: (value) =>
-                                          setState(() => promised = value!),
-                                      activeColor: Colors.white,
-                                    ),
-                                    Text(
-                                      'No',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        TextFormField(
-                          controller: phoneNumberController,
-                          style: const TextStyle(color: Colors.white),
-                          cursorColor: Colors.white,
-                          decoration: InputDecoration(
-                            labelText: 'Phone Number',
-                            labelStyle: const TextStyle(color: Colors.white),
-                            prefixIcon: const Icon(
-                              Icons.phone,
-                              color: Colors.white,
-                            ),
-                            suffixIcon: IconButton(
-                                onPressed: () async {
-                                  final Contact contact = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (_) => ContactPickerDemo()));
-                                  Map number = await parse(
-                                      contact.phones!.first.value.toString());
-                                  setState(() {
-                                    phoneNumberController.text = number['e164'];
-                                  });
-                                },
-                                icon: Icon(
-                                  Symbols.contacts,
-                                  color: Colors.white,
-                                )),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        // DropdownButtonFormField(
-                        //   decoration: InputDecoration(
-                        //     labelText: 'Mkoa',
-                        //     hintText: "Select Region",
-                        //     labelStyle: const TextStyle(color: Colors.white),
-                        //     hintStyle: const TextStyle(color: Colors.white),
-                        //     prefixIcon: const Icon(
-                        //       Icons.home,
-                        //       color: Colors.white,
-                        //     ),
-                        //     enabledBorder: OutlineInputBorder(
-                        //       borderRadius: BorderRadius.circular(10),
-                        //       borderSide: const BorderSide(
-                        //         color: Colors.white,
-                        //       ),
-                        //     ),
-                        //     focusedBorder: OutlineInputBorder(
-                        //       borderRadius: BorderRadius.circular(10),
-                        //       borderSide: const BorderSide(
-                        //         color: Colors.white,
-                        //       ),
-                        //     ),
-                        //   ),
-                        //   style: const TextStyle(color: Colors.white),
-                        //   value: selectedRegion,
-                        //   onChanged: (newValue) {
-                        //     setState(() {
-                        //       selectedRegion = newValue!;
-                        //       selectedDistrict = null;
-                        //     });
-                        //   },
-                        //   items: _regions.map<DropdownMenuItem>((Region value) {
-                        //     return DropdownMenuItem(
-                        //       value: value,
-                        //       child: Text(
-                        //         value.name.toString(),
-                        //         style: const TextStyle(color: Colors.green),
-                        //       ),
-                        //     );
-                        //   }).toList(),
-                        // ),
-                        // const SizedBox(height: 20),
-                        // if (selectedRegion != null) ...[
-                        //   DropdownButtonFormField(
-                        //     iconEnabledColor: Colors.white,
-                        //     decoration: InputDecoration(
-                        //       labelText: 'Jimbo',
-                        //       hintText: 'Changua Jimbo',
-                        //       labelStyle: const TextStyle(color: Colors.white),
-                        //       hintStyle: const TextStyle(color: Colors.white),
-                        //       prefixIcon: const Icon(
-                        //         IconlyLight.location,
-                        //         color: Colors.white,
-                        //       ),
-                        //       enabledBorder: OutlineInputBorder(
-                        //         borderRadius: BorderRadius.circular(10),
-                        //         borderSide: const BorderSide(
-                        //           color: Colors.white,
-                        //         ),
-                        //       ),
-                        //       focusedBorder: OutlineInputBorder(
-                        //         borderRadius: BorderRadius.circular(10),
-                        //         borderSide: const BorderSide(
-                        //           color: Colors.white,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //     style: const TextStyle(color: Colors.white),
-                        //     value: selectedDistrict,
-                        //     onChanged: (newValue) {
-                        //       setState(() {
-                        //         selectedDistrict = newValue!;
-                        //       });
-                        //     },
-                        //     items: selectedRegion?.districts!
-                        //         .map<DropdownMenuItem>((value) {
-                        //       return DropdownMenuItem(
-                        //         value: value,
-                        //         child: Text(
-                        //           value.name.toString(),
-                        //           style: const TextStyle(color: Colors.green),
-                        //         ),
-                        //       );
-                        //     }).toList(),
-                        //   ),
-                        //   const SizedBox(height: 20),
-                        // ],
-                        // if (selectedDistrict != null) ...[
-                        //   DropdownButtonFormField(
-                        //     iconEnabledColor: Colors.white,
-                        //     decoration: InputDecoration(
-                        //       labelText: 'Kata',
-                        //       hintText: 'Chagua Kata ',
-                        //       labelStyle: const TextStyle(color: Colors.white),
-                        //       hintStyle: const TextStyle(color: Colors.white),
-                        //       prefixIcon: const Icon(
-                        //         Icons.add_chart_sharp,
-                        //         color: Colors.white,
-                        //       ),
-                        //       enabledBorder: OutlineInputBorder(
-                        //         borderRadius: BorderRadius.circular(10),
-                        //         borderSide: const BorderSide(
-                        //           color: Colors.white,
-                        //         ),
-                        //       ),
-                        //       focusedBorder: OutlineInputBorder(
-                        //         borderRadius: BorderRadius.circular(10),
-                        //         borderSide: const BorderSide(
-                        //           color: Colors.white,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //     style: const TextStyle(color: Colors.white),
-                        //     value: selectedWard,
-                        //     onChanged: (newValue) {
-                        //       setState(() {
-                        //         selectedWard = newValue!;
-                        //       });
-                        //     },
-                        //     items: selectedDistrict?.wards!
-                        //         .map<DropdownMenuItem>((value) {
-                        //       return DropdownMenuItem(
-                        //         value: value,
-                        //         child: Text(
-                        //           value.name.toString(),
-                        //           style: const TextStyle(color: Colors.green),
-                        //         ),
-                        //       );
-                        //     }).toList(),
-                        //   ),
-                        //   const SizedBox(height: 20),
-                        // ],
-                        // if (selectedDistrict != null &&
-                        //     selectedWard != null) ...[
-                        //   TextFormField(
-                        //     controller: _mtaa,
-                        //     style: const TextStyle(color: Colors.white),
-                        //     cursorColor: Colors.white,
-                        //     decoration: InputDecoration(
-                        //       labelText: 'Mtaa/Kijiji',
-                        //       labelStyle: const TextStyle(color: Colors.white),
-                        //       border: OutlineInputBorder(
-                        //         borderRadius: BorderRadius.circular(10),
-                        //         borderSide: const BorderSide(
-                        //           color: Colors.white,
-                        //         ),
-                        //       ),
-                        //       prefixIcon:
-                        //           Icon(IconlyLight.home, color: Colors.white),
-                        //       focusedBorder: OutlineInputBorder(
-                        //         borderRadius: BorderRadius.circular(10),
-                        //         borderSide: const BorderSide(
-                        //           color: Colors.white,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ),
-                        //   const SizedBox(height: 20),
-                        // ],
-                        TextFormField(
-                          controller: detailsController,
-                          cursorColor: Colors.white,
-                          style: TextStyle(color: Colors.white),
-                          maxLines: 5,
-                          decoration: InputDecoration(
-                            hintText:
-                                "Enter interesting details about the supporter (optional)",
-                            labelStyle: const TextStyle(color: Colors.white),
-                            hintStyle:
-                                TextStyle(color: Colors.white.withOpacity(0.8)),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: addMember,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xff009b65),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: Container(
-                            width: 300,
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            alignment: Alignment.center,
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.person_add,
-                                  color: Colors.yellow,
-                                  size: 24,
-                                ),
-                                SizedBox(width: 10),
-                                Text(
-                                  'Add',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.yellow,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        appBar: _buildAppBar(),
+        body: Stack(
+          children: [
+            _buildBackground(),
+            _buildForm(),
+            if (_isLoading) _buildLoadingOverlay(),
           ],
         ),
       ),
     );
   }
 
-  void addMember() async {
-    if (firstNameController.text.isNotEmpty &&
-        lastNameController.text.isNotEmpty &&
-        _selectedGender.isNotEmpty &&
-        phoneNumberController.text.isNotEmpty &&
-        promised.isNotEmpty
-    ) {
-      showDialog(
+  Future<bool> _onWillPop() async {
+    if (_hasUnsavedChanges()) {
+      return await showDialog(
         context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return Dialog(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            child: Container(
-              height: 100,
-              width: 100,
-              alignment: Alignment.center,
-              child: CircularProgressIndicator.adaptive(
-                backgroundColor: Colors.white,
-              ),
+        builder: (context) =>
+            AlertDialog(
+              title: const Text('Discard Changes?'),
+              content: const Text(
+                  'You have unsaved changes. Are you sure you want to discard them?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('Discard'),
+                ),
+              ],
             ),
-          );
-        },
-      );
+      ) ?? false;
+    }
+    return true;
+  }
 
-      Map number = await parse(phoneNumberController.text, region: "TZ");
+  bool _hasUnsavedChanges() {
+    return _firstNameController.text.isNotEmpty ||
+        _lastNameController.text.isNotEmpty ||
+        _phoneNumberController.text.isNotEmpty ||
+        _detailsController.text.isNotEmpty ||
+        _selectedGender.isNotEmpty ||
+        _promised.isNotEmpty;
+  }
 
-      String message = await supporterProvider.addSupporter(
-        supporter: Supporter(
-          first_name: firstNameController.text,
-          last_name: lastNameController.text,
-          phone_number: number['e164'],
-          region_id: selectedRegion?.id,
-          ward_id: selectedWard?.id,
-          village_id: _mtaa.text.toString(),
-          district_id: selectedDistrict?.id,
-          other_supporter_details: detailsController.text.toString(),
-          promised: promised == 'Yes' ? 1 : 0,
-          gender: _selectedGender,
+  AppBar _buildAppBar() {
+    return AppBar(
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        onPressed: () => Navigator.of(context).maybePop(),
+      ),
+      title: const Text("Add Supporter", style: TextStyle(color: Colors.white)),
+      backgroundColor: _backgroundColor,
+      elevation: 0,
+    );
+  }
+
+  Widget _buildBackground() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: _gradientColors,
         ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingOverlay() {
+    return Container(
+      color: Colors.black54,
+      child: const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.yellow),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildForm() {
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            onChanged: () {
+              setState(() => _hasFormError = false);
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (_hasFormError)
+                  _buildErrorBanner(),
+                _buildSectionTitle("Supporter Details"),
+                const SizedBox(height: 16),
+                _buildPersonalInfoFields(),
+                const SizedBox(height: 24),
+                _buildAdditionalInfoSection(),
+                const SizedBox(height: 32),
+                _buildSubmitButton(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorBanner() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.red.withOpacity(0.1),
+        border: Border.all(color: Colors.red),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: const Text(
+        'Please correct the errors in the form',
+        style: TextStyle(color: Colors.red),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        color: Colors.yellow,
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  Widget _buildPersonalInfoFields() {
+    return Column(
+      children: [
+        _buildTextField(
+          controller: _firstNameController,
+          hintText: "First Name",
+          icon: Icons.person,
+          validator: _validateName,
+        ),
+        const SizedBox(height: 16),
+        _buildTextField(
+          controller: _lastNameController,
+          hintText: "Last Name",
+          icon: Icons.person,
+          validator: _validateName,
+        ),
+        const SizedBox(height: 16),
+        _buildPhoneNumberField(),
+      ],
+    );
+  }
+
+  String? _validateName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'This field is required';
+    }
+    if (value.length < 2) {
+      return 'Name must be at least 2 characters';
+    }
+    if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+      return 'Name can only contain letters';
+    }
+    return null;
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hintText,
+    required IconData icon,
+    String? Function(String?)? validator,
+    TextInputType keyboardType = TextInputType.text,
+    int maxLines = 1,
+  }) {
+    return TextFormField(
+      controller: controller,
+      style: const TextStyle(color: Colors.white),
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: const TextStyle(color: Colors.white70),
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.1),
+        prefixIcon: Icon(icon, color: Colors.white),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.white),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.white),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.yellow),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+            vertical: 16, horizontal: 16),
+      ),
+      validator: validator,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+    );
+  }
+
+  Widget _buildPhoneNumberField() {
+    return TextFormField(
+      controller: _phoneNumberController,
+      style: const TextStyle(color: Colors.white),
+      keyboardType: TextInputType.phone,
+      decoration: InputDecoration(
+        hintText: "Phone Number",
+        hintStyle: const TextStyle(color: Colors.white70),
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.1),
+        prefixIcon: const Icon(Icons.phone, color: Colors.white),
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.contact_phone, color: Colors.white),
+          onPressed: _pickContactNumber,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.white),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.white),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.yellow),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+            vertical: 16, horizontal: 16),
+      ),
+      validator: _validatePhoneNumber,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+    );
+  }
+
+  String? _validatePhoneNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a phone number';
+    }
+
+    final cleanNumber = value.replaceAll(RegExp(r'\D'), '');
+    if (cleanNumber.length < 10 || cleanNumber.length > 15) {
+      return 'Please enter a valid phone number';
+    }
+
+    return null;
+  }
+
+  Widget _buildAdditionalInfoSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildSectionTitle("Additional Information"),
+        const SizedBox(height: 16),
+        _buildSelectionContainer(
+          title: "Gender",
+          isValid: _selectedGender.isNotEmpty,
+          child: Row(
+            children: [
+              _buildRadioButton("Male", "Male"),
+              const SizedBox(width: 16),
+              _buildRadioButton("Female", "Female"),
+            ],
+          ),
+        ),
+        if (_selectedGender.isEmpty)
+          const Padding(
+            padding: EdgeInsets.only(top: 8, left: 12),
+            child: Text(
+              'Please select a gender',
+              style: TextStyle(color: Colors.red, fontSize: 12),
+            ),
+          ),
+        const SizedBox(height: 16),
+        _buildSelectionContainer(
+          title: "Promised",
+          isValid: _promised.isNotEmpty,
+          child: Row(
+            children: [
+              _buildRadioButton("Yes", "Yes", isPromised: true),
+              const SizedBox(width: 16),
+              _buildRadioButton("No", "No", isPromised: true),
+            ],
+          ),
+        ),
+        if (_promised.isEmpty)
+          const Padding(
+            padding: EdgeInsets.only(top: 8, left: 12),
+            child: Text(
+              'Please select an option',
+              style: TextStyle(color: Colors.red, fontSize: 12),
+            ),
+          ),
+        const SizedBox(height: 16),
+        _buildTextField(
+          controller: _detailsController,
+          hintText: "Other Details (Optional)",
+          icon: Icons.note,
+          maxLines: 3,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSelectionContainer({
+    required String title,
+    required Widget child,
+    required bool isValid,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isValid ? Colors.white : Colors.red,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+              title, style: const TextStyle(color: Colors.white, fontSize: 16)),
+          child,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRadioButton(String value, String label,
+      {bool isPromised = false}) {
+    return Row(
+      children: [
+        Radio<String>(
+          value: value,
+          groupValue: isPromised ? _promised : _selectedGender,
+          onChanged: (String? newValue) {
+            setState(() {
+              if (isPromised) {
+                _promised = newValue!;
+              } else {
+                _selectedGender = newValue!;
+              }
+            });
+          },
+          activeColor: Colors.yellow,
+        ),
+        Text(label, style: const TextStyle(color: Colors.white)),
+      ],
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: _backgroundColor,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      onPressed: _isLoading ? null : _submitForm,
+      child: const Text(
+        "Add Supporter",
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.yellow,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _submitForm() async {
+    if (!_validateForm()) {
+      setState(() => _hasFormError = true);
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      // Create supporter data object
+      final supporterData = SupporterData(
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
+        phoneNumber: _phoneNumberController.text.trim(),
+        gender: _selectedGender,
+        promised: _promised,
+        details: _detailsController.text.trim(),
       );
 
-      Navigator.pop(context); // Close the progress indicator dialog
+      // Validate phone number format
+      bool isPhoneValid = await isValidPhoneNumber(supporterData.phoneNumber);
+      if (!isPhoneValid) {
+        _showErrorDialog('Please enter a valid phone number');
+        return;
+      }
 
-      _showDialog(context, message); // Show the message dialog
+      // TODO: Replace with your actual API call
+      await Future.delayed(const Duration(seconds: 2)); // Simulating API call
+
+      // Handle success
+      _showSuccessDialog();
+    } catch (e) {
+      _showErrorDialog('Failed to add supporter: ${e.toString()}');
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 
-  void _showDialog(BuildContext context, String message) {
+  bool _validateForm() {
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return false;
+    }
+
+    if (_selectedGender.isEmpty) {
+      _showErrorSnackBar('Please select a gender');
+      return false;
+    }
+
+    if (_promised.isEmpty) {
+      _showErrorSnackBar('Please indicate if the supporter has promised');
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<bool> isValidPhoneNumber(String phoneNumber) async {
+    try {
+      final cleanNumber = phoneNumber.replaceAll(RegExp(r'\D'), '');
+      // You might want to replace 'US' with the appropriate country code
+      return await _phoneNumberUtil.validate(cleanNumber, regionCode: 'US');
+    } catch (e) {
+      print('Phone number validation error: $e');
+      return false;
+    }
+  }
+
+  Future<void> _pickContactNumber() async {
+    final PermissionStatus permissionStatus = await _getContactPermission();
+    if (permissionStatus == PermissionStatus.granted) {
+      try {
+        final Contact? contact = await ContactsService
+            .openDeviceContactPicker();
+        if (contact != null && contact.phones!.isNotEmpty) {
+          setState(() {
+            _phoneNumberController.text = contact.phones!.first.value ?? '';
+          });
+        }
+      } catch (e) {
+        _showErrorDialog('Error accessing contacts: ${e.toString()}');
+      }
+    } else {
+      _handleInvalidPermissions(permissionStatus);
+    }
+  }
+
+  Future<PermissionStatus> _getContactPermission() async {
+    PermissionStatus permission = await Permission.contacts.status;
+    if (permission != PermissionStatus.granted &&
+        permission != PermissionStatus.permanentlyDenied) {
+      PermissionStatus permissionStatus = await Permission.contacts.request();
+      return permissionStatus;
+    }
+    return permission;
+  }
+
+  void _handleInvalidPermissions(PermissionStatus permissionStatus) {
+    if (permissionStatus == PermissionStatus.denied) {
+      _showErrorSnackBar('Access to contact data denied');
+    } else if (permissionStatus == PermissionStatus.permanentlyDenied) {
+      _showErrorDialog(
+          'Contact data access is permanently denied.\n'
+              'Please enable it in your device settings.'
+      );
+    }
+  }
+
+  void _showSuccessDialog() {
     StylishDialog(
       context: context,
-      alertType: message.contains('successfully')
-          ? StylishDialogType.SUCCESS
-          : StylishDialogType.ERROR,
-      title: Text('Message'),
-      content: Text(message),
+      alertType: StylishDialogType.SUCCESS,
+      title: const Text('Success'),
+      content: const Text('Supporter added successfully'),
       confirmButton: ElevatedButton(
         onPressed: () {
-          Navigator.of(context).pop();
-          // Check if the message indicates success
-          if (message.contains('successfully')) {
-            // Navigate to the homepage
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => DashboardScreen(),
-              ),
-            );
-          }
+          Navigator.of(context).pop(); // Close dialog
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const DashboardScreen()),
+          );
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor:
-              message.contains('successfully') ? Colors.green : Colors.red,
+          backgroundColor: _backgroundColor,
         ),
-        child: Text(
+        child: const Text(
+          'OK',
+          style: TextStyle(color: Colors.yellow),
+        ),
+      ),
+    ).show();
+  }
+
+  void _showErrorDialog(String message) {
+    setState(() => _isLoading = false);
+    StylishDialog(
+      context: context,
+      alertType: StylishDialogType.ERROR,
+      title: const Text('Error'),
+      content: Text(message),
+      confirmButton: ElevatedButton(
+        onPressed: () => Navigator.of(context).pop(),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.red,
+        ),
+        child: const Text(
           'OK',
           style: TextStyle(color: Colors.white),
         ),
       ),
     ).show();
   }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
+  }
+
+
+
 }

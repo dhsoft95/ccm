@@ -5,9 +5,10 @@ import 'package:ccm/Providers/authProvider.dart';
 import 'package:ccm/Providers/dataProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
+
 import 'package:iconly/iconly.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:phone_number/phone_number.dart';
 import 'package:provider/provider.dart';
 import '../../Models/User.dart';
 import '../../Models/locations.dart';
@@ -23,6 +24,7 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+  final PhoneNumberUtil _phoneNumberUtil = PhoneNumberUtil();
   late AuthProvider authProvider;
   late DataProvider dataProvider;
   List<Region> _regions = [];
@@ -523,6 +525,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
+
+  Future<String> _parsePhoneNumber(String phone) async {
+    try {
+      final PhoneNumber phoneNumber = await _phoneNumberUtil.parse(
+        phone,
+        regionCode: 'TZ',
+      );
+      return phoneNumber.e164;
+    } catch (e) {
+      throw Exception('Invalid phone number format');
+    }
+  }
+
   register() async {
     if (emailController.text.isNotEmpty &&
         passwordController.text.isNotEmpty &&
@@ -551,27 +566,45 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             );
           });
 
-      Map number = await parse(phoneNumberController.text, region: "TZ");
-      authProvider.registerUser = User(
-          full_name: fullNameController.text,
-          phone: number['e164'],
-          email: emailController.text,
-          password: passwordController.text,
-          region_id: selectedRegion?.id,
-          ward_id: selectedWard?.id,
-          village_id: _mtaa.text.toString(),
-          district_id: selectedDistrict?.id,
-          position_id: selectedPosition?.id.toString(),
-          party_affiliation: "CCM",
-          other_candidate_details: detailsController.text.toString());
+      try {
+        String parsedNumber = await _parsePhoneNumber(phoneNumberController.text);
 
-      await authProvider.sendOtp(phone: number['e164'].toString());
+        authProvider.registerUser = User(
+            full_name: fullNameController.text,
+            phone: parsedNumber,
+            email: emailController.text,
+            password: passwordController.text,
+            region_id: selectedRegion?.id,
+            ward_id: selectedWard?.id,
+            village_id: _mtaa.text.toString(),
+            district_id: selectedDistrict?.id,
+            position_id: selectedPosition?.id.toString(),
+            party_affiliation: "CCM",
+            other_candidate_details: detailsController.text.toString());
 
-      Navigator.pop(context);
-      if (authProvider.otpSent) {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (_) => OTPConfirmationScreen()));
+        await authProvider.sendOtp(phone: parsedNumber);
+
+        Navigator.pop(context); // Close loading dialog
+        if (authProvider.otpSent) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (_) => OTPConfirmationScreen()));
+        }
+      } catch (e) {
+        Navigator.pop(context); // Close loading dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill in all required fields'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 }

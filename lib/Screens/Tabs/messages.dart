@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:ccm/Providers/supporterProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:stylish_dialog/stylish_dialog.dart';
 import 'home.dart';
+
 class Messages extends StatefulWidget {
   const Messages({Key? key}) : super(key: key);
 
@@ -21,7 +23,6 @@ class _MessagesState extends State<Messages> {
     supporterProvider = Provider.of<SupporterProvider>(context);
     super.didChangeDependencies();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,9 +33,7 @@ class _MessagesState extends State<Messages> {
             color: Colors.white,
             size: 32,
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
           tooltip: MaterialLocalizations.of(context).backButtonTooltip,
         ),
         backgroundColor: const Color(0xff009b65),
@@ -60,15 +59,12 @@ class _MessagesState extends State<Messages> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  decoration: const BoxDecoration(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Image.asset(
-                      'assets/message.png',
-                      width: 200,
-                      height: 220,
-                    ),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Image.asset(
+                    'assets/message.png',
+                    width: 200,
+                    height: 220,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -146,66 +142,77 @@ class _MessagesState extends State<Messages> {
     );
   }
 
-  void _showDialog(BuildContext context, String message) {
+  void sendMessage() async {
+    if (textMessagesController.text.isEmpty) {
+      _showErrorDialog('Please enter a message before sending.');
+      return;
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
+
+    try {
+      Map<String, dynamic> response = await supporterProvider.sendMessage(
+        message: textMessagesController.text,
+      );
+      Navigator.pop(context); // Close the loading dialog
+
+      if (response['error'] == true) {
+        _showErrorDialog(response['message']);
+      } else {
+        _showSuccessDialog(response);
+      }
+    } catch (e) {
+      Navigator.pop(context); // Close the loading dialog
+      print('Error sending message: $e');
+      _showErrorDialog('An unexpected error occurred: ${e.toString()}');
+    }
+  }
+
+  void _showSuccessDialog(Map<String, dynamic> messageData) {
     StylishDialog(
       context: context,
-      alertType: message.toLowerCase().contains('successfully')
-          ? StylishDialogType.SUCCESS
-          : StylishDialogType.ERROR,
-      title: Text('Message'),
-      content: Text(message),
+      alertType: StylishDialogType.SUCCESS,
+      title: const Text('Message Sent Successfully'),
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Text('Recipient: ${messageData['recipient']}'),
+          const SizedBox(height: 8),
+          Text('Message: ${messageData['message']}'),
+        ],
+      ),
       confirmButton: ElevatedButton(
         onPressed: () {
           Navigator.of(context).pop();
-          // Check if the message indicates success
-          if (message.toLowerCase().contains('successfully')) {
-            // Navigate to the homepage
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => DashboardScreen(),
-              ),
-            );
-          }
+          textMessagesController.clear();
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const DashboardScreen()),
+          );
         },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: message.toLowerCase().contains('successfully')
-              ? Colors.green
-              : Colors.red,
-        ),
-        child: Text(
-          'OK',
-          style: TextStyle(color: Colors.white),
-        ),
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+        child: const Text('OK', style: TextStyle(color: Colors.white)),
       ),
     ).show();
   }
 
-  void sendMessage() async {
-    if (textMessagesController.text.isNotEmpty) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return Dialog(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            child: Container(
-              height: 100,
-              width: 100,
-              alignment: Alignment.center,
-              child: const CircularProgressIndicator.adaptive(
-                backgroundColor: Colors.white,
-              ),
-            ),
-          );
-        },
-      );
-      String? response = await supporterProvider.sendMessage(message: textMessagesController.text);
-      Navigator.pop(context); // Close the loading dialog
-      if (response != null) {
-        // Show the response message in a dialog
-        _showDialog(context, response);
-      }
-    }
+  void _showErrorDialog(String message) {
+    StylishDialog(
+      context: context,
+      alertType: StylishDialogType.ERROR,
+      title: const Text('Error'),
+      content: Text(message),
+      confirmButton: ElevatedButton(
+        onPressed: () => Navigator.of(context).pop(),
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+        child: const Text('OK', style: TextStyle(color: Colors.white)),
+      ),
+    ).show();
   }
 }
